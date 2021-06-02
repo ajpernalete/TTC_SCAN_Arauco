@@ -1,0 +1,50 @@
+
+2021-05-14 00:11:18,588 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error al Escanear: can only concatenate str (not "float") to str
+2021-05-14 00:11:30,996 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error iniciarRecoleccionDeDistancias(): cannot unpack non-iterable NoneType object
+2021-05-14 00:15:54,050 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error guardar_db_estereo_defecto: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`ttcpesaje`.`medicion_portal`, CONSTRAINT `FK_MEDICION_PORTAL_REFERENCE_PESAJE` FOREIGN KEY (`PES_ID`) REFERENCES `pesajes` (`PES_ID`))')
+2021-05-14 00:15:54,051 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:33:18,555 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:34:51,409 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:35:08,422 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0xa9 in position 0: invalid start byte
+2021-05-26 23:35:08,440 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-26 23:36:03,515 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:39:27,004 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: unsupported operand type(s) for +: 'float' and 'str'
+2021-05-26 23:41:38,320 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: unsupported operand type(s) for +: 'float' and 'str'
+2021-05-26 23:42:56,068 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: unsupported operand type(s) for +: 'float' and 'str'
+2021-05-26 23:47:41,251 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:48:10,901 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0x82 in position 14: invalid start byte
+2021-05-26 23:48:10,927 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-26 23:49:31,206 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:49:55,112 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:50:41,254 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:51:06,588 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:54:30,011 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-26 23:57:12,524 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:02:02,906 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:04:15,435 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:07:17,569 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:10:32,330 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:15:49,908 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 00:18:43,699 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error promedio_alturas_bancos_full_estereo: division by zero
+2021-05-27 00:26:29,511 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0xa9 in position 0: invalid start byte
+2021-05-27 00:26:29,538 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-27 00:27:09,875 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error promedio_alturas_bancos_full_estereo: division by zero
+2021-05-27 00:29:38,578 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0x94 in position 0: invalid start byte
+2021-05-27 00:29:38,596 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-27 15:54:45,113 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0x81 in position 0: invalid start byte
+2021-05-27 15:54:45,134 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-27 15:56:15,598 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0xb5 in position 0: invalid start byte
+2021-05-27 15:56:15,617 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-05-27 16:05:10,239 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:09:42,535 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:10:00,375 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:10:44,611 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:12:13,746 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:12:20,025 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: list index out of range
+2021-05-27 16:15:50,065 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:16:45,825 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:17:00,781 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:17:58,303 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
+2021-05-27 16:24:35,902 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error promedio_alturas_bancos_full_estereo: division by zero
+2021-05-27 16:32:28,062 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0x82 in position 6: invalid start byte
+2021-05-27 16:32:28,085 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'

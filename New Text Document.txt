@@ -1,0 +1,2 @@
+activate ttc
+pyinstaller --noconfirm --onedir --windowed --icon "E:/TTC/TTC_SCAN_Source/Icono-APP.ico" --add-data "E:/TTC/TTC_SCAN_Source/SETUP;SETUP/"  "E:/TTC/TTC_SCAN_Source/TTC_SCAN_Portal.py"

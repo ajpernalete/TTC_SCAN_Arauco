@@ -1,0 +1,5 @@
+E:/TTC/TTC_SCAN/SETUP/Modo.txt
+S:/Modo.txt
+
+E:/TTC/TTC_SCAN/SETUP/NPesaje.txt
+S:/NPesaje.txt
