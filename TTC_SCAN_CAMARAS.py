@@ -101,6 +101,10 @@ class TTC_PORTAL():
     ANCHOCARRO = 0
     LARGOCARRO = 0
 
+    #Variables nuevas para ancho calculado
+    ANCHOCAMIONCALCULADO = 0
+    ANCHOCARROCALCULADO = 0
+
     #Datos Medición estereo con largo suministrado
     ALTURA_CAMION_E = 0
     LARGO_CAMION_E = 0
@@ -131,6 +135,7 @@ class TTC_PORTAL():
     LARGO_CARRO_LC = 0
     MR_CARRO_LC = 0
     MR_TOTAL_LC = 0
+
 #Fin Iniciar variables
     def reiniciar_Variables(self):
         self.EjeX = []
@@ -190,6 +195,10 @@ class TTC_PORTAL():
         self.LARGOCAMION = 0
         self.ANCHOCARRO = 0
         self.LARGOCARRO = 0
+
+        #Variables nuevas para ancho calculado
+        self.ANCHOCAMIONCALCULADO = 0
+        self.ANCHOCARROCALCULADO = 0
 
         #Datos Medición estereo con largo suministrado
         self.ALTURA_CAMION_E = 0
