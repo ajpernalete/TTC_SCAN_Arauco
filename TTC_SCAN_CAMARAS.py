@@ -55,6 +55,10 @@ class TTC_PORTAL():
     EjeY3 = []
     EjeZ3 = []
 
+    EjeX4 = []
+    EjeY4 = []
+    EjeZ4 = []
+
     circles = []
 
     t=1
@@ -140,6 +144,10 @@ class TTC_PORTAL():
         self.EjeX3 = []
         self.EjeY3 = []
         self.EjeZ3 = []
+
+        self.EjeX4 = []
+        self.EjeY4 = []
+        self.EjeZ4 = []
 
         self.circles = []
 
@@ -244,7 +252,7 @@ class TTC_PORTAL():
     def escribirArchivoLog(self,mensaje):
         logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s ===> %(levelname)s ===> TTC_SCAN_Portal.exe ===> %(message)s',
-                        filename = 'E:/TTC/TTC_SCAN_Source/SETUP/Log-Errores.log',
+                        filename = 'E:/TTC/TTC_SCAN/SETUP/Log-Errores.log',
                         filemode = 'a',)
         logging.info(mensaje)
 
@@ -444,6 +452,7 @@ class TTC_PORTAL():
             RS_TOP_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-TOP-ACTIVE")
             RS_CORNER_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-CORNER-ACTIVE")
             RS_BOTTOM_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-BOTTOM-ACTIVE")
+            RS_RIGHT_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-RIGHT-ACTIVE")
             if RS_TOP_ACTIVE == True:
                 pipeline = rs.pipeline()
                 config = rs.config()
@@ -468,18 +477,34 @@ class TTC_PORTAL():
             else:
                 pass
 
+            if RS_RIGHT_ACTIVE == True:
+                pipeline4 = rs.pipeline()
+                config4 = rs.config()
+                config4.enable_device(self.cargar_datos(ruta_configuraciones,"RS-RIGHT-DEVICE"))
+                profile4 = pipeline4.start(config4)
+            else:
+                pass
+
             if RS_TOP_ACTIVE == True:
-                pipeline.stop()
-                
+                pipeline.stop()                
             else:
                 pass
+
             if RS_CORNER_ACTIVE == True:
-                pipeline2.stop()
-                
+                pipeline2.stop()            
             else:
                 pass
+
             if RS_BOTTOM_ACTIVE == True:
-                pipeline3.stop()
+                pipeline3.stop()      
+            else:
+                pass
+
+            if RS_RIGHT_ACTIVE == True:
+                pipeline4.stop()      
+            else:
+                pass
+            
             
             return True
 
@@ -517,6 +542,11 @@ class TTC_PORTAL():
             D = depth3.get_distance(x,y)
             D*=100
             return D
+
+        def getDistance4(x,y):
+            D = depth4.get_distance(x,y)
+            D*=100
+            return D
         
         try:
             
@@ -525,6 +555,7 @@ class TTC_PORTAL():
             RS_TOP_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-TOP-ACTIVE")
             RS_CORNER_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-CORNER-ACTIVE")
             RS_BOTTOM_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-BOTTOM-ACTIVE")
+            RS_RIGHT_ACTIVE = self.cargar_datos(ruta_configuraciones,"RS-RIGHT-ACTIVE")
             if RS_TOP_ACTIVE == True:
                 pipeline = rs.pipeline()
                 config = rs.config()
@@ -560,10 +591,23 @@ class TTC_PORTAL():
                 depth_sensor3.set_option(rs.option.visual_preset, Preset['HighDensity'])
             else:
                 pass
+
+            if RS_RIGHT_ACTIVE == True:
+                pipeline4 = rs.pipeline()
+                config4 = rs.config()
+                config4.enable_device(self.cargar_datos(ruta_configuraciones,"RS-RIGHT-DEVICE"))
+                config4.enable_stream(rs.stream.depth, 1280, 720, rs.format.z16, 30)
+                config4.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+                profile4 = pipeline4.start(config4)
+                depth_sensor4 = profile4.get_device().first_depth_sensor()
+                depth_sensor4.set_option(rs.option.visual_preset, Preset['HighDensity'])
+            else:
+                pass
                        
             contadorX = 1
             contadorX2 = 1
             contadorX3 = 1
+            contadorX4 = 1
 
             tiempo = self.cargar_datos(ruta_configuraciones,"Tiempo")
 
@@ -580,6 +624,8 @@ class TTC_PORTAL():
             tempAsic2 = 0
             tempProj3 = 0
             tempAsic3 = 0
+            tempProj4 = 0
+            tempAsic4 = 0
 
             while True:
                 
@@ -597,9 +643,9 @@ class TTC_PORTAL():
                     # Obtener temperatura de camara
                     # Get device temperature
                     tempProj = depth_sensor.get_option(rs.option.projector_temperature)
-                    print("tempProj: " + str(tempProj))
+                    # print("tempProj: " + str(tempProj))
                     tempAsic = depth_sensor.get_option(rs.option.asic_temperature)
-                    print("tempAsic: " + str(tempAsic ))
+                    # print("tempAsic: " + str(tempAsic ))
 
                     for x in self.circles:
                         y=360
@@ -651,9 +697,9 @@ class TTC_PORTAL():
                     # Obtener temperatura de camara
                     # Get device temperature
                     tempProj2 = depth_sensor2.get_option(rs.option.projector_temperature)
-                    print("tempProj2: " + str(tempProj2))
+                    # print("tempProj2: " + str(tempProj2))
                     tempAsic2 = depth_sensor2.get_option(rs.option.asic_temperature)
-                    print("tempAsic2: " + str(tempAsic2 ))
+                    # print("tempAsic2: " + str(tempAsic2 ))
 
                     for x in self.circles:
                         y=360
@@ -705,9 +751,9 @@ class TTC_PORTAL():
                     # Obtener temperatura de camara
                     # Get device temperature
                     tempProj3 = depth_sensor3.get_option(rs.option.projector_temperature)
-                    print("tempProj3: " + str(tempProj3))
+                    # print("tempProj3: " + str(tempProj3))
                     tempAsic3 = depth_sensor3.get_option(rs.option.asic_temperature)
-                    print("tempAsic3: " + str(tempAsic3 ))
+                    # print("tempAsic3: " + str(tempAsic3 ))
 
                     for x in self.circles: 
                         y=360
@@ -747,6 +793,66 @@ class TTC_PORTAL():
                         self.EjeY3.append(Yeje)
                         self.EjeZ3.append(Zeje)
                     contadorX3+=1
+                else:
+                    pass
+
+                if RS_RIGHT_ACTIVE == True:
+                    rotar_imagen = self.cargar_datos(ruta_configuraciones,"RS-RIGHT-ROTAR")
+                    frames4 = pipeline4.wait_for_frames()
+                    depth4 = frames4.get_depth_frame()
+                    color_frame4 = frames4.get_color_frame()
+                    if not depth4 or not color_frame4: continue
+                    color_image4 = np.asanyarray(color_frame4.get_data())
+                    # Extracto para guardar imagenes respaldo al natural
+                    if not exists(self.path_respaldo+"/Img/Camara-Right"):
+                        makedirs(self.path_respaldo+"/Img/Camara-Right")                  
+                    cv2.imwrite(self.path_respaldo+"/Img/Camara-Right/"+str(contadorX4)+".jpg",color_image4)
+
+                    # Obtener temperatura de camara
+                    # Get device temperature
+                    tempProj4 = depth_sensor4.get_option(rs.option.projector_temperature)
+                    # print("tempProj4: " + str(tempProj4))
+                    tempAsic4 = depth_sensor4.get_option(rs.option.asic_temperature)
+                    # print("tempAsic4: " + str(tempAsic4 ))
+
+                    for x in self.circles: 
+                        y=360
+                        # print(x,y)
+                        cv2.circle(color_image4, (x,y), 2, (255, 255, 255), 5)
+                        cv2.circle(color_image4, (x,y), 2, (0, 0, 255), 2)
+                    color = (0,0,255)
+                    fsize = 0.3
+                    bold = 0
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    cons=1
+                    for i, x in enumerate(self.text):
+                        y = 360
+                        # print(x,y)
+                        D = getDistance4(x,y)
+                        num = i % 2
+                        if num == 0:
+                            var = 40
+                        else:
+                            var = 80
+                        cv2.putText(color_image4, str(cons)+":"+str(int(D)), (x,y-var), font,fsize, (255, 255, 255), 3,cv2.LINE_AA)
+                        cv2.putText(color_image4, str(cons)+":"+str(int(D)), (x,y-var),font,fsize,color,1,cv2.LINE_AA)
+                        cons+=1       
+                    # Creando carpera en ruta principal     
+                    if not exists(self.path+"/Img/Camara-Right"):
+                        makedirs(self.path+"/Img/Camara-Right") 
+                    if rotar_imagen == True:
+                        #  M = cv2.getRotationMatrix2D((1280//2,720//2),270,1)
+                         color_image4 = imutils.rotate_bound(color_image4, 90)
+                    else:
+                        pass
+                    cv2.imwrite(self.path+"/Img/Camara-Right/"+str(contadorX4)+".jpg",color_image4)
+                    for Xeje in self.circles:
+                        Yeje=360
+                        Zeje = getDistance3(Xeje,Yeje)
+                        self.EjeX4.append(contadorX4)
+                        self.EjeY4.append(Yeje)
+                        self.EjeZ4.append(Zeje)
+                    contadorX4+=1
                 else:
                     pass
                 
@@ -820,9 +926,15 @@ class TTC_PORTAL():
                     mensaje =  ("<--INFO-TOP-->\n"+
                                     "TEMPERATURA_SENSOR="+str(tempProj)+"\n"+
                                     "TEMPERATURA_TARJETA="+str(tempAsic)+"\n"+
+                                    "<--INFO-CORNER-->\n"+
+                                    "TEMPERATURA_SENSOR="+str(tempProj2)+"\n"+
+                                    "TEMPERATURA_TARJETA="+str(tempAsic2)+"\n"+
                                     "<--INFO-BOTTOM-->\n"+
-                                    "TEMPERATURA_SENSOR="+str(tempProj)+"\n"+
-                                    "TEMPERATURA_TARJETA="+str(tempAsic)+"")
+                                    "TEMPERATURA_SENSOR="+str(tempProj3)+"\n"+
+                                    "TEMPERATURA_TARJETA="+str(tempAsic3)+"\n"+
+                                    "<--INFO-RIGHT-->\n"+
+                                    "TEMPERATURA_SENSOR="+str(tempProj4)+"\n"+
+                                    "TEMPERATURA_TARJETA="+str(tempAsic4)+"")
                     self.post_info_camaras_txt(self.path, 'INFO-CAMARAS', mensaje)
                     break
                 
@@ -838,12 +950,21 @@ class TTC_PORTAL():
                 pass
             if RS_BOTTOM_ACTIVE == True:
                 pipeline3.stop()
+                
+            else:
+                pass
+            if RS_RIGHT_ACTIVE == True:
+                pipeline4.stop()
 
             self.post_archivo_txt("ESCANEADO")
             self.write_serial(self.apagar_verde)
             time.sleep(2)
 
-            return self.EjeX, self.EjeY, self.EjeZ, self.EjeX2, self.EjeY2, self.EjeZ2, self.EjeX3, self.EjeY3, self.EjeZ3, self.tiempo_datos_por_linea
+            return self.EjeX, self.EjeY, self.EjeZ, \
+                    self.EjeX2, self.EjeY2, self.EjeZ2, \
+                    self.EjeX3, self.EjeY3, self.EjeZ3, \
+                    self.EjeX4, self.EjeY4, self.EjeZ4, \
+                    self.tiempo_datos_por_linea
         
         except Exception as e:
             self.post_archivo_txt("CAMERAS-NOT-WORK")
@@ -2506,7 +2627,7 @@ class TTC_PORTAL():
             #Obtener ruta directorio actual
             #ruta_directorio = ttc.obtener_ruta_actual()
             #Ruta archivos configuraciones.json
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             ruta_camiones = self.cargar_datos(ruta_configuraciones,"Ruta-Camiones")
             limites_graficar_3d = self.cargar_datos(ruta_configuraciones,"LIMITES-GRAFICAR-3D")
@@ -2592,7 +2713,7 @@ class TTC_PORTAL():
             #Obtener ruta directorio actual
             #ruta_directorio = ttc.obtener_ruta_actual()
             #Ruta archivos configuraciones.json
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             ruta_camiones = self.cargar_datos(ruta_configuraciones,"Ruta-Camiones")
             limites_graficar_3d = self.cargar_datos(ruta_configuraciones,"LIMITES-GRAFICAR-3D")
@@ -2757,7 +2878,7 @@ class TTC_PORTAL():
         try:            
             # ruta_directorio = ttc.obtener_ruta_actual()
             #Ruta archivos configuraciones.json
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             altura_portal = self.cargar_datos(ruta_configuraciones,"ALTURA-PORTAL")
 
@@ -2787,7 +2908,7 @@ class TTC_PORTAL():
     def listas_para_graficar_3D_estereo(self,lista_graficar : list) -> list:
         try:
             
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             altura_portal = self.cargar_datos(ruta_configuraciones,"ALTURA-PORTAL")
             #print(np_lista_z,np_lista_x,np_lista_y)
@@ -2812,7 +2933,7 @@ class TTC_PORTAL():
     def listas_para_graficar_3D_autocargante(self,lista_graficar : list) -> list:
         try:
             
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             altura_portal = self.cargar_datos(ruta_configuraciones,"ALTURA-PORTAL")
             #print(np_lista_z,np_lista_x,np_lista_y)
@@ -2966,7 +3087,6 @@ class TTC_PORTAL():
     def enviar_mensaje_correo(self,mensaje):
         try:
             sender_email = "ajpernaletel@gmail.com"
-            receiver_email = "ttc.albertopernalete@gmail.com"
             password = "alberto22061988"
             hoy = datetime.today()
             fecha = hoy.strftime("%Y-%m-%d %H:%M:%S")
@@ -2974,7 +3094,9 @@ class TTC_PORTAL():
             message = MIMEMultipart("alternative")
             message["Subject"] = "TTC_SCAN "+fecha
             message["From"] = "TTC_SCAN ARAUCO LAS CRUCES <"+sender_email+">"
-            message["To"] = receiver_email
+            message["To"] = "ttc.albertopernalete@gmail.com"
+            message["Bcc"] = "ttc.alejandracatejo@gmail.com"
+            message["Bcc"] = "cvillegasttc@gmail.com"
 
             # Create the plain-text and HTML version of your message
             text = mensaje
@@ -2990,9 +3112,11 @@ class TTC_PORTAL():
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
                 server.login(sender_email, password)
-                server.sendmail(
-                    sender_email, receiver_email, message.as_string()
-                )
+                # server.sendmail(
+                #     sender_email, "ttc.albertopernalete@gmail.com", message.as_string()
+                # )
+                server.send_message(message)
+                server.quit()
         except Exception as e:
             self.escribirArchivoLog("Error enviando correo eléctronico: "+str(e))
 
@@ -3003,7 +3127,7 @@ class TTC_PORTAL():
             # Encender Verde = S31
             # Apagar Verde = S30
             #Ruta archivos configuraciones.json
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             port = self.cargar_datos(ruta_configuraciones,"Port")
             baudrate = self.cargar_datos(ruta_configuraciones,"Baudrate")
@@ -3033,7 +3157,7 @@ class TTC_PORTAL():
             # Encender Verde = 31
             # Apagar Verde = 30
             #Ruta archivos configuraciones.json
-            ruta_configuraciones = "E:/TTC/TTC_SCAN_Source/SETUP/configuraciones.json"
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
             #Ruta todos los camiones
             port = self.cargar_datos(ruta_configuraciones,"Port")
             baudrate = self.cargar_datos(ruta_configuraciones,"Baudrate")

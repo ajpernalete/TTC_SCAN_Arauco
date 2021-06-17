@@ -22,13 +22,20 @@ from TTC_SCAN_CAMARAS import TTC_PORTAL as TTC_P
 #------------------------------------
 ttc = TTC_P()
 
+#Si el semaforo está encendido, se apaga.
 ttc.write_serial(ttc.apagar_rojo)
+ttc.write_serial(ttc.apagar_verde)
 
-# ischeck = ttc.check_cameras_on()
-# if ischeck == False:
-#     ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS OFF")
-# elif ischeck == True:
-#     ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS ON")
+#Iniciar el Lidar siempre
+ttc.write_serial(ttc.encender_lidar)
+
+
+ischeck = ttc.check_cameras_on()
+if ischeck == False:
+    ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS OFF")
+    ttc.post_archivo_txt("RESET-OFF")
+elif ischeck == True:
+    ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS ON")
 
 ruta_directorio = ttc.obtener_ruta_actual()
 ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
@@ -130,6 +137,7 @@ while True:
                 EjeX, EjeY, EjeZ,   \
                 EjeX2, EjeY2, EjeZ2,    \
                 EjeX3, EjeY3, EjeZ3,    \
+                EjeX4, EjeY4, EjeZ4,    \
                 tiempo_datos_por_linea = ttc.iniciarRecoleccionDeDistancias()
             except Exception as e:
                 ttc.escribirArchivoLog("Error iniciarRecoleccionDeDistancias(): "+str(e))
@@ -140,6 +148,7 @@ while True:
             RS_TOP_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-TOP-ACTIVE")
             RS_CORNER_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-CORNER-ACTIVE")
             RS_BOTTOM_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-BOTTOM-ACTIVE")
+            RS_RIGHT_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-RIGHT-ACTIVE")
             LIDAR_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"Lidar-ACTIVE")
 
             if RS_TOP_ACTIVE == True:
@@ -180,6 +189,19 @@ while True:
                 ttc.contadorX3 = 1            
             else:
                 pass
+
+            if RS_RIGHT_ACTIVE == True:
+                datos4 = {}
+                datos4['x'] = ttc.EjeX4
+                datos4['y'] = ttc.EjeY4
+                datos4['z'] = ttc.EjeZ4
+                ttc.crear_json( 'Puntos-Right', datos4)
+                ttc.escribirArchivo(str(ttc.EjeX4)+"\n","-Right")
+                ttc.escribirArchivo(str(ttc.EjeY4)+"\n","-Right")
+                ttc.escribirArchivo(str(ttc.EjeZ4)+"\n","-Right")
+                ttc.contadorX4 = 1            
+            else:
+                pass
             #=====Guardar datos en archivos=====  
                 
 
@@ -199,6 +221,9 @@ while True:
             ttc.EjeX3 = []
             ttc.EjeY3 = []
             ttc.EjeZ3 = []
+            ttc.EjeX4 = []
+            ttc.EjeY4 = []
+            ttc.EjeZ4 = []
             ttc.tiempo_datos_por_linea = []
             validador_nsemaforo = True
             #===================================
