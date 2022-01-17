@@ -556,7 +556,6 @@ while True:
             #     #Reset por Raspberry 
             #     #ttc.write_txt("R:/TTC_SCAN/Modo.txt","t")
 
-
             ttc.reiniciar_Variables()
             ttc.post_archivo_txt("EXPORTADO")
             time.sleep(3)
