@@ -4511,8 +4511,8 @@ class TTC_PORTAL():
             scan_espacio = self.check_disco('E:/')
             
             f = open(path+name+'.txt', "w")    
-            mensaje = ("SCAN="+str(operador_espacio)+"GB\n"+
-                        "OPERADOR="+str(scan_espacio)+"GB\n"+
+            mensaje = ("SCAN="+str(scan_espacio)+"GB\n"+
+                        "OPERADOR="+str(operador_espacio)+"GB\n"+
                         fecha_hora)
             f.write(mensaje)
             f.close()
