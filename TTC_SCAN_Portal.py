@@ -545,16 +545,16 @@ while True:
             print("Exportado ======> OK")
             ttc.post_estado_txt(ruta_camion, "Estado", "FINALIZADO")
             ttc.post_espacio_disponible("MEMORIA-DISCO", "S:/")
-            # isOkHR = ttc.realsense_hardware_reset()
-            # print('IsOkHR',isOkHR)
-            # if isOkHR == True:
-            #     ttc.escribirArchivoLog("Hardaware Reset al final de medición OK")
-            # else:
-            #     ttc.escribirArchivoLog("Error del Hardaware Reset al final de medición")
-            #     #Reset por modulo
-            #     ttc.write_serial(ttc.reset_PC)
-            #     #Reset por Raspberry 
-            #     #ttc.write_txt("R:/TTC_SCAN/Modo.txt","t")
+            isOkHR = ttc.realsense_hardware_reset()
+            print('IsOkHR',isOkHR)
+            if isOkHR == True:
+                ttc.escribirArchivoLog("Hardaware Reset al final de medición OK")
+            else:
+                ttc.escribirArchivoLog("Error del Hardaware Reset al final de medición")
+                #Reset por modulo
+                ttc.write_serial(ttc.reset_PC)
+                #Reset por Raspberry 
+                #ttc.write_txt("R:/TTC_SCAN/Modo.txt","t")
 
             ttc.reiniciar_Variables()
             ttc.post_archivo_txt("EXPORTADO")
