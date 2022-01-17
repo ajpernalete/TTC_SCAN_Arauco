@@ -119,6 +119,30 @@ while True:
             ttc.write_serial(ttc.encender_rojo)
             ttc.reiniciar_Variables()
             time.sleep(2)
+
+            validar_disco_ttcscan = ttc.cargar_datos(ruta_configuraciones,"ESPACIO-TTCSCAN")
+            minimo_espacio_ttcscan = ttc.cargar_datos(ruta_configuraciones,"MINIMO-ESPACIO-TTCSCAN")
+            validar_disco_operador = ttc.cargar_datos(ruta_configuraciones,"ESPACIO-OPERADOR")
+            minimo_espacio_operador = ttc.cargar_datos(ruta_configuraciones,"MINIMO-ESPACIO-OPERADOR")
+            espacio_libre_ttcscan = 0
+            espacio_libre_operador = 0
+            
+            if validar_disco_ttcscan == True:
+                espacio_libre_ttcscan = ttc.check_disco('E:/')
+                if espacio_libre_ttcscan > minimo_espacio_ttcscan:
+                    ttc.escribirArchivoLog("ESPACIO EN DISCO DEL TTCSCAN SUFICIENTE")
+                else:
+                    ttc.escribirArchivoLog("ESPACIO EN DISCO DEL TTCSCAN INSUFICIENTE")
+                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL TTCSCAN INSUFICIENTE")
+
+            if validar_disco_operador == True:
+                espacio_libre_operador = ttc.check_disco('S:/')
+                if espacio_libre_operador > minimo_espacio_operador:
+                    ttc.escribirArchivoLog("ESPACIO EN DISCO DEL OPERADOR SUFICIENTE")
+                else:
+                    ttc.escribirArchivoLog("ESPACIO EN DISCO DEL OPERADOR INSUFICIENTE")
+                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL OPERADOR INSUFICIENTE")
+
             
             #===================================
             #============INICIO SCAN============
@@ -144,98 +168,101 @@ while True:
                 ttc.escribirArchivoModo("f")
 
         elif modo == "g":
-            #=====Guardar datos en archivos=====      
-            RS_TOP_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-TOP-ACTIVE")
-            RS_CORNER_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-CORNER-ACTIVE")
-            RS_BOTTOM_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-BOTTOM-ACTIVE")
-            RS_RIGHT_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-RIGHT-ACTIVE")
-            LIDAR_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"Lidar-ACTIVE")
+            try:
+                #=====Guardar datos en archivos=====      
+                RS_TOP_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-TOP-ACTIVE")
+                RS_CORNER_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-CORNER-ACTIVE")
+                RS_BOTTOM_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-BOTTOM-ACTIVE")
+                RS_RIGHT_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"RS-RIGHT-ACTIVE")
+                LIDAR_ACTIVE = ttc.cargar_datos(ruta_configuraciones,"Lidar-ACTIVE")
 
-            if RS_TOP_ACTIVE == True:
-                datos = {}
-                datos['x'] = ttc.EjeX
-                datos['y'] = ttc.EjeY
-                datos['z'] = ttc.EjeZ
-                ttc.crear_json('Puntos-Top', datos)
-                ttc.escribirArchivo(str(ttc.EjeX)+"\n","-Top")
-                ttc.escribirArchivo(str(ttc.EjeY)+"\n","-Top")
-                ttc.escribirArchivo(str(ttc.EjeZ)+"\n","-Top")
-                ttc.contadorX = 1              
-            else:
-                pass
+                if RS_TOP_ACTIVE == True:
+                    datos = {}
+                    datos['x'] = ttc.EjeX
+                    datos['y'] = ttc.EjeY
+                    datos['z'] = ttc.EjeZ
+                    ttc.crear_json('Puntos-Top', datos)
+                    ttc.escribirArchivo(str(ttc.EjeX)+"\n","-Top")
+                    ttc.escribirArchivo(str(ttc.EjeY)+"\n","-Top")
+                    ttc.escribirArchivo(str(ttc.EjeZ)+"\n","-Top")
+                    ttc.contadorX = 1              
+                else:
+                    pass
 
-            if RS_CORNER_ACTIVE == True:
-                datos2 = {}
-                datos2['x'] = ttc.EjeX2
-                datos2['y'] = ttc.EjeY2
-                datos2['z'] = ttc.EjeZ2
-                ttc.crear_json( 'Puntos-Corner', datos2)
-                ttc.escribirArchivo(str(ttc.EjeX2)+"\n","-Corner")
-                ttc.escribirArchivo(str(ttc.EjeY2)+"\n","-Corner")
-                ttc.escribirArchivo(str(ttc.EjeZ2)+"\n","-Corner")
-                ttc.contadorX2 = 1           
-            else:
-                pass
+                if RS_CORNER_ACTIVE == True:
+                    datos2 = {}
+                    datos2['x'] = ttc.EjeX2
+                    datos2['y'] = ttc.EjeY2
+                    datos2['z'] = ttc.EjeZ2
+                    ttc.crear_json( 'Puntos-Corner', datos2)
+                    ttc.escribirArchivo(str(ttc.EjeX2)+"\n","-Corner")
+                    ttc.escribirArchivo(str(ttc.EjeY2)+"\n","-Corner")
+                    ttc.escribirArchivo(str(ttc.EjeZ2)+"\n","-Corner")
+                    ttc.contadorX2 = 1           
+                else:
+                    pass
 
-            if RS_BOTTOM_ACTIVE == True:
-                datos3 = {}
-                datos3['x'] = ttc.EjeX3
-                datos3['y'] = ttc.EjeY3
-                datos3['z'] = ttc.EjeZ3
-                ttc.crear_json( 'Puntos-Bottom', datos3)
-                ttc.escribirArchivo(str(ttc.EjeX3)+"\n","-Bottom")
-                ttc.escribirArchivo(str(ttc.EjeY3)+"\n","-Bottom")
-                ttc.escribirArchivo(str(ttc.EjeZ3)+"\n","-Bottom")
-                ttc.contadorX3 = 1            
-            else:
-                pass
+                if RS_BOTTOM_ACTIVE == True:
+                    datos3 = {}
+                    datos3['x'] = ttc.EjeX3
+                    datos3['y'] = ttc.EjeY3
+                    datos3['z'] = ttc.EjeZ3
+                    ttc.crear_json( 'Puntos-Bottom', datos3)
+                    ttc.escribirArchivo(str(ttc.EjeX3)+"\n","-Bottom")
+                    ttc.escribirArchivo(str(ttc.EjeY3)+"\n","-Bottom")
+                    ttc.escribirArchivo(str(ttc.EjeZ3)+"\n","-Bottom")
+                    ttc.contadorX3 = 1            
+                else:
+                    pass
 
-            if RS_RIGHT_ACTIVE == True:
-                datos4 = {}
-                datos4['x'] = ttc.EjeX4
-                datos4['y'] = ttc.EjeY4
-                datos4['z'] = ttc.EjeZ4
-                ttc.crear_json( 'Puntos-Right', datos4)
-                ttc.escribirArchivo(str(ttc.EjeX4)+"\n","-Right")
-                ttc.escribirArchivo(str(ttc.EjeY4)+"\n","-Right")
-                ttc.escribirArchivo(str(ttc.EjeZ4)+"\n","-Right")
-                ttc.contadorX4 = 1            
-            else:
-                pass
-            #=====Guardar datos en archivos=====  
+                if RS_RIGHT_ACTIVE == True:
+                    datos4 = {}
+                    datos4['x'] = ttc.EjeX4
+                    datos4['y'] = ttc.EjeY4
+                    datos4['z'] = ttc.EjeZ4
+                    ttc.crear_json( 'Puntos-Right', datos4)
+                    ttc.escribirArchivo(str(ttc.EjeX4)+"\n","-Right")
+                    ttc.escribirArchivo(str(ttc.EjeY4)+"\n","-Right")
+                    ttc.escribirArchivo(str(ttc.EjeZ4)+"\n","-Right")
+                    ttc.contadorX4 = 1            
+                else:
+                    pass
+                #=====Guardar datos en archivos=====  
+                    
+
+
+                #--Se genera archivo para Carlos con todos los datos para Sync
+                ttc.generated_file_full(ttc.tiempo_datos_por_linea, ttc.EjeZ, ttc.EjeZ2, ttc.EjeZ3)
+                #--Se copia la info de NPesaje que Daniela genera
+                ttc.post_lines_in_file(ttc.get_lines_in_file(ttc.cargar_datos(ruta_configuraciones,'Path-Pesaje')),'Datos-Camion',ttc.path) 
                 
-
-
-            #--Se genera archivo para Carlos con todos los datos para Sync
-            ttc.generated_file_full(ttc.tiempo_datos_por_linea, ttc.EjeZ, ttc.EjeZ2, ttc.EjeZ3)
-            #--Se copia la info de NPesaje que Daniela genera
-            ttc.post_lines_in_file(ttc.get_lines_in_file(ttc.cargar_datos(ruta_configuraciones,'Path-Pesaje')),'Datos-Camion',ttc.path) 
-              
-            #Se vacian [] las listas de los puntos de distancias RS y Lidar
-            ttc.EjeX = []
-            ttc.EjeY = []
-            ttc.EjeZ = []
-            ttc.EjeX2 = []
-            ttc.EjeY2 = []
-            ttc.EjeZ2 = []
-            ttc.EjeX3 = []
-            ttc.EjeY3 = []
-            ttc.EjeZ3 = []
-            ttc.EjeX4 = []
-            ttc.EjeY4 = []
-            ttc.EjeZ4 = []
-            ttc.tiempo_datos_por_linea = []
-            validador_nsemaforo = True
-            #===================================
-            #=============FIN SCAN==============
-            #===================================
-            #--Aqui el archivo Modo debe pasarse
-            #--a la acción de medir
-            MEDIR = ttc.cargar_datos(ruta_configuraciones,"MEDIR")
-            if MEDIR == True:
-                ttc.escribirArchivoModo("m")
-            else:
-                ttc.escribirArchivoModo("f")
+                #Se vacian [] las listas de los puntos de distancias RS y Lidar
+                ttc.EjeX = []
+                ttc.EjeY = []
+                ttc.EjeZ = []
+                ttc.EjeX2 = []
+                ttc.EjeY2 = []
+                ttc.EjeZ2 = []
+                ttc.EjeX3 = []
+                ttc.EjeY3 = []
+                ttc.EjeZ3 = []
+                ttc.EjeX4 = []
+                ttc.EjeY4 = []
+                ttc.EjeZ4 = []
+                ttc.tiempo_datos_por_linea = []
+                validador_nsemaforo = True
+                #===================================
+                #=============FIN SCAN==============
+                #===================================
+                #--Aqui el archivo Modo debe pasarse
+                #--a la acción de medir
+                MEDIR = ttc.cargar_datos(ruta_configuraciones,"MEDIR")
+                if MEDIR == True:
+                    ttc.escribirArchivoModo("m")
+                else:
+                    ttc.escribirArchivoModo("f")
+            except Exception as e:
+                ttc.escribirArchivoLog("Error al guardar archivos: "+str(e))
 
         elif modo == "m":
             #===================================
@@ -251,7 +278,7 @@ while True:
             auto_cargante = dict_npesaje['AUTOCARGANTE']
 
             try:
-                print("MIDIENDO")
+                # print("MIDIENDO")
                 ttc.post_archivo_txt("MIDIENDO")
 
                 #2- Cargamos el factor de corrección de configuraciones.json
@@ -262,7 +289,8 @@ while True:
                 ruta_camiones = ttc.cargar_datos(ruta_configuraciones,"Ruta-Camiones")
                 ruta_camion = ruta_camiones+"/"+ dict_npesaje['IDPESAJE']
                 ttc.PES_ID = dict_npesaje['IDPESAJE']
-                print(ttc.PES_ID)
+                ttc.IDMEDICION = dict_npesaje['IDMEDICION']
+                # print(ttc.PES_ID)
                 ttc.MP_PATENTE = dict_npesaje['PATENTE']
                 if 'PATENTECARRO' in dict_npesaje:
                     ttc.MP_PATENTE_CARRO = dict_npesaje['PATENTECARRO']
@@ -301,7 +329,7 @@ while True:
 
                 #6-Calcular Velocidad completa del camión
                 velocidad_camion = ttc.obtener_velocidad_camion(inicio_camion,fin_carro,ruta_camion)
-                print("Velocidad:",str(velocidad_camion)+"km")
+                # print("Velocidad:",str(velocidad_camion)+"km")
 
                 lista_camion_carro_z = lista_top_z[inicio_camion:fin_carro]
                 lista_camion_carro_x = lista_top_x[inicio_camion:fin_carro]
@@ -326,11 +354,11 @@ while True:
                                                                     inicio_camion)
                                 
                     
-                print("Inicio Camion",inicio_camion)
-                print("Inicio B1", camion_x_final[0])
-                print("Fin Camion",fin_camion)
-                print("Inicio Carro",inicio_carro)
-                print("Fin Carro",fin_carro)
+                # print("Inicio Camion",inicio_camion)
+                # print("Inicio B1", camion_x_final[0])
+                # print("Fin Camion",fin_camion)
+                # print("Inicio Carro",inicio_carro)
+                # print("Fin Carro",fin_carro)
           
 
 
@@ -396,7 +424,17 @@ while True:
             #**** MEDICION ESTEREO CARRO ****
 
 
-
+            #**** GRAFICAR LATERALES ****
+                try:
+                    ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_bottom, 
+                                                    ttc.lista_graficar_carro_bottom, 
+                                                    'bottom')
+                    ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_right, 
+                                                    ttc.lista_graficar_carro_right, 
+                                                    'right')
+                except Exception as e:
+                    ttc.escribirArchivoLog("Error Guardar gráficas laterales: "+str(e))
+            #**** FIN GRAFICAR LATERALES ****
 
                 
             #**** GUARDAR GRÁFICAs ****
@@ -471,7 +509,14 @@ while True:
                 EXPORTAR = ttc.cargar_datos(ruta_configuraciones,"EXPORTAR")
                 if EXPORTAR == True:
                     ttc.escribirArchivoModo("e")
-                else:
+                else:                    
+                    ttc.post_archivo_txt("EXPORTANDO")
+                    print("Exportando...")
+                    print("Exportado ======> OK")
+                    ttc.post_archivo_txt("EXPORTADO")
+                    time.sleep(3)
+                    ttc.post_archivo_txt("ESPERANDO")
+                    ttc.reiniciar_Variables()
                     ttc.escribirArchivoModo("f")
 
             except Exception as e:
@@ -499,10 +544,24 @@ while True:
             ttc.copiarArchivosExportar()
             print("Exportado ======> OK")
             ttc.post_estado_txt(ruta_camion, "Estado", "FINALIZADO")
+            ttc.post_espacio_disponible("MEMORIA-DISCO", "S:/")
+            isOkHR = ttc.realsense_hardware_reset()
+            print('IsOkHR',isOkHR)
+            if isOkHR == True:
+                ttc.escribirArchivoLog("Hardaware Reset al final de medición OK")
+            else:
+                ttc.escribirArchivoLog("Error del Hardaware Reset al final de medición")
+                #Reset por modulo
+                ttc.write_serial(ttc.reset_PC)
+                #Reset por Raspberry 
+                #ttc.write_txt("R:/TTC_SCAN/Modo.txt","t")
+
+
+            ttc.reiniciar_Variables()
             ttc.post_archivo_txt("EXPORTADO")
             time.sleep(3)
+            print("ESPERANDO")
             ttc.post_archivo_txt("ESPERANDO")
-            ttc.reiniciar_Variables()
             ttc.escribirArchivoModo("f")
             #===================================
             #===========FIN EXPORTAR============
@@ -520,6 +579,12 @@ while True:
             pass
             # Reiniciar
             #subprocess.call("shutdown -r")
+
+        elif modo == "h":
+            ttc.post_archivo_txt("CONECTADO")
+            time.sleep(2)
+            ttc.post_archivo_txt("ESPERANDO")
+            ttc.escribirArchivoModo("f")
 
         else:
             pass

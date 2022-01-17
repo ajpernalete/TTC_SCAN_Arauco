@@ -53,3 +53,97 @@
 2021-06-15 19:33:38,776 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: list index out of range
 2021-06-15 19:33:39,020 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: 'utf-8' codec can't decode byte 0xb5 in position 0: invalid start byte
 2021-06-15 19:33:39,036 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'
+2021-10-19 15:35:02,011 ===> INFO ===> TTC_SCAN_Portal.exe ===> CHECK CAMERAS START
+2021-10-19 15:35:18,473 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Cameras OFF al iniciar: No device connected
+2021-10-19 15:35:18,473 ===> INFO ===> TTC_SCAN_Portal.exe ===> CHECK CAMERAS ERROR
+2021-10-19 15:37:08,956 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Leer Archivo nsemaforo: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_Source/SETUP/nsemaforo.txt'
+2021-10-19 15:37:12,653 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Leer Archivo nsemaforo: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_Source/SETUP/nsemaforo.txt'
+2021-10-19 15:37:31,093 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Leer Archivo nsemaforo: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_Source/SETUP/nsemaforo.txt'
+2021-10-19 15:39:22,464 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-20 02:29:16,786 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-20 02:33:23,715 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-20 02:37:54,511 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:01:37,504 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:02:39,035 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:06:29,839 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:07:39,981 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:10:36,856 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:13:53,690 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:15:15,548 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 13:23:30,705 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 14:39:04,547 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 15:31:59,263 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-21 16:10:57,694 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error al graficar 3D: 'TTC_PORTAL' object has no attribute 'DISTANCIA_CARRO_BOTTOM'
+2021-10-21 16:10:57,793 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error al graficar 3D: 'TTC_PORTAL' object has no attribute 'DISTANCIA_CARRO_RIGHT'
+2021-10-21 16:10:58,415 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:10:58,655 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:11:28,023 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error al graficar 3D: 'TTC_PORTAL' object has no attribute 'DISTANCIA_CARRO_BOTTOM'
+2021-10-21 16:11:28,148 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error al graficar 3D: 'TTC_PORTAL' object has no attribute 'DISTANCIA_CARRO_RIGHT'
+2021-10-21 16:11:28,490 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:11:28,691 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:26:20,029 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:26:20,206 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:26:20,481 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:26:20,995 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:28:01,883 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:28:02,048 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:28:02,325 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:28:02,538 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:30:34,766 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:30:34,914 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:30:35,281 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:30:35,511 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:33:07,075 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:33:07,436 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: argument of type 'int' is not iterable
+2021-10-21 16:33:07,795 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-21 16:33:08,048 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 17:47:50,875 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Escribir archivo Mediciones.txt: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt'
+2021-10-24 17:47:53,448 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Conexión Base de Datos: (2005, "Unknown MySQL server host 'DESKTOP-H7FLD3C' (11001)")
+2021-10-24 17:47:53,448 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error guardar_db_estereo_defecto: 'NoneType' object has no attribute 'cursor'
+2021-10-24 17:47:53,449 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Puntos-Top.json'
+2021-10-24 17:47:53,459 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error exportar Fotos Cámara Top: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Img/Camara-Top/2.jpg'
+2021-10-24 17:50:59,006 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Conexión Base de Datos: (2005, "Unknown MySQL server host 'DESKTOP-H7FLD3C' (11001)")
+2021-10-24 17:50:59,006 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error guardar_db_estereo_defecto: 'NoneType' object has no attribute 'cursor'
+2021-10-24 17:50:59,006 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Puntos-Top.json'
+2021-10-24 17:51:01,026 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error exportar archivos: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' and 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' are the same file
+2021-10-24 17:51:46,996 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Conexión Base de Datos: (2005, "Unknown MySQL server host 'DESKTOP-H7FLD3C' (11001)")
+2021-10-24 17:51:46,996 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error guardar_db_estereo_defecto: 'NoneType' object has no attribute 'cursor'
+2021-10-24 17:51:46,996 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Puntos-Top.json'
+2021-10-24 17:51:49,008 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error exportar archivos: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' and 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' are the same file
+2021-10-24 17:53:48,136 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Conexión Base de Datos: (2005, "Unknown MySQL server host 'DESKTOP-H7FLD3C' (11001)")
+2021-10-24 17:53:48,136 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error guardar_db_estereo_defecto: 'NoneType' object has no attribute 'cursor'
+2021-10-24 17:53:48,136 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Flujo Principal: [Errno 2] No such file or directory: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Puntos-Top.json'
+2021-10-24 17:53:50,158 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error exportar archivos: 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' and 'C:/TTC/TTC_SCAN_source/SETUP/CAMIONES/2130/Mediciones-2130.txt' are the same file
+2021-10-24 23:02:42,127 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: list index out of range
+2021-10-24 23:02:43,548 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:02:44,752 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:02:46,397 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:02:47,368 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:02:48,255 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:06,644 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:07,169 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:08,882 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:09,372 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:10,565 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:11,095 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:11,977 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:12,449 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:12,907 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:13,381 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:13,807 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:14,248 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:17,671 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:03:17,871 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:16:56,353 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: list index out of range
+2021-10-24 23:16:56,639 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: list index out of range
+2021-10-24 23:16:57,894 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:16:58,407 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:17:51,053 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: list index out of range
+2021-10-24 23:17:51,238 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces Laterales: list index out of range
+2021-10-24 23:17:51,538 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-24 23:17:51,877 ===> DEBUG ===> TTC_SCAN_Portal.exe ===> update_title_pos
+2021-10-25 14:58:43,174 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Graficar 3D N_Veces: [Errno 2] No such file or directory: 'E:/TTC/GRAFICAS/Grafica3D-2130.jpg'
+2021-10-25 15:00:51,035 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Leer Archivo Modo: Expecting value: line 1 column 1 (char 0)
+2021-10-25 15:00:51,054 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Leer Archivo nsemaforo: [Errno 2] No such file or directory: 'E:/TTC/TTC_SCAN_Source2/SETUP/nsemaforo.txt'
+2021-10-25 15:00:51,068 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error leer Serial: could not open port 'COM2': FileNotFoundError(2, 'El sistema no puede encontrar el archivo especificado.', None, 2)
+2021-10-25 15:00:51,068 ===> INFO ===> TTC_SCAN_Portal.exe ===> Error Comunicación Serial Semáforo: 'NoneType' object has no attribute 'split'

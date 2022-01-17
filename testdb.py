@@ -23,4 +23,7 @@ def conexion_db(servidor,usuario,clave,nombre_db):
         print("Error conexión")
         escribirArchivoLog("Error Conexión Base de Datos: "+str(e))
 
-conec_db = conexion_db('DESKTOP-H7FLD3C', 'portal', 'pituca188', 'ttcpesaje') 
+# conec_db = conexion_db('DESKTOP-H7FLD3C', 'portal', 'pituca188', 'ttcpesaje') 
+
+var  = "CAMION_A"
+print(var, var[:-1])
