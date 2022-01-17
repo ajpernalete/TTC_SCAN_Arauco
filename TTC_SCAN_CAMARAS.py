@@ -4519,5 +4519,5 @@ class TTC_PORTAL():
         except Exception as e:
             self.escribirArchivoLog("Error Escribir archivo Mediciones.txt: "+str(e))
  
-    def create_csv(self):
+    def create_csv_master(self):
         pass
