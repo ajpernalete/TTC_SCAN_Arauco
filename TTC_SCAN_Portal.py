@@ -548,7 +548,12 @@ while True:
             ttc.copiarArchivosExportar()
             print("Exportado ======> OK")
             ttc.post_estado_txt(ruta_camion, "Estado", "FINALIZADO")
+            # Actualizar estado de la memoria de discos en Portal y Operador
             ttc.post_espacio_disponible("MEMORIA-DISCO", "S:/")
+            # Crear CSV y Cargar data de camiones en archivo MASTER
+            ttc.create_csv_master()
+            ttc.load_data_csv_master()
+            # Ejecutar Hardwar Reset al final de cada medición
             isOkHR = ttc.realsense_hardware_reset()
             print('IsOkHR',isOkHR)
             if isOkHR == True:
