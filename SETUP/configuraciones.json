@@ -3,6 +3,7 @@
     "Path-Pesaje":"E:/TTC/TTC_SCAN_Source2/SETUP/NPesaje.txt",
     "Path-estado-scan":"E:/TTC/TTC_SCAN_Source2/SETUP/ESTADO-SCAN.txt",
     "Path-nsemaforo":"E:/TTC/TTC_SCAN_Source2/SETUP/nsemaforo.txt",
+    "Path-master-csv":"E:/TTC/",
     "Tiempo":60,
     "CONTROL-SEMAFORO":true,
     "NRS":2,

@@ -30,6 +30,7 @@ from PyQt5 import QtGui
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import csv
 
 #Evitar error generado por las fuentes de Matplotlib
 logging.getLogger('matplotlib.font_manager').disabled = True
@@ -102,6 +103,10 @@ class TTC_PORTAL():
     LARGOCAMION = 0
     ANCHOCARRO = 0
     LARGOCARRO = 0
+    BANCOSCAMION = ''
+    BANCOSCARRO = ''
+    GUIA = ''
+    AUTOCARGANTE = ''
 
     #Variables nuevas para ancho calculado
     ANCHOCAMIONCALCULADO = 0
@@ -135,6 +140,14 @@ class TTC_PORTAL():
     ANCHO_CARRO_E = 0
     MR_CARRO_E = 0
     MR_TOTAL_E = 0
+    BASE_1_CAMION_PUNTO = 0
+    BASE_1_CAMION_DISTANCIA = 0
+    BASE_2_CAMION_PUNTO = 0
+    BASE_2_CAMION_DISTANCIA = 0
+    BASE_1_CARRO_PUNTO = 0
+    BASE_1_CARRO_DISTANCIA = 0
+    BASE_2_CARRO_PUNTO = 0
+    BASE_2_CARRO_DISTANCIA = 0
 
     #Datos Medición con largo calculado
     VELOCIDAD_PROMEDIO_TOTAL = 0
@@ -223,6 +236,10 @@ class TTC_PORTAL():
         self.LARGOCAMION = 0
         self.ANCHOCARRO = 0
         self.LARGOCARRO = 0
+        self.BANCOSCAMION = ''
+        self.BANCOSCARRO = ''
+        self.GUIA = ''
+        self.AUTOCARGANTE = ''
 
         #Variables nuevas para ancho calculado
         self.ANCHOCAMIONCALCULADO = 0
@@ -256,6 +273,14 @@ class TTC_PORTAL():
         self.ANCHO_CARRO_E = 0
         self.MR_CARRO_E = 0
         self.MR_TOTAL_E = 0
+        self.BASE_1_CAMION_PUNTO = 0
+        self.BASE_1_CAMION_DISTANCIA = 0
+        self.BASE_2_CAMION_PUNTO = 0
+        self.BASE_2_CAMION_DISTANCIA = 0
+        self.BASE_1_CARRO_PUNTO = 0
+        self.BASE_1_CARRO_DISTANCIA = 0
+        self.BASE_2_CARRO_PUNTO = 0
+        self.BASE_2_CARRO_DISTANCIA = 0
 
         #Datos Medición con largo calculado
         self.VELOCIDAD_PROMEDIO_TOTAL = 0
@@ -584,10 +609,6 @@ class TTC_PORTAL():
             self.escribirArchivoLog("CHECK CAMERAS ERROR")
 
             return False
-
-            # self.write_txt("R:/TTC_SCAN/Modo.txt","t")
-            # time.sleep(3)
-            # subprocess.call("shutdown -s")
 
     def realsense_hardware_resetOLD(self):
         
@@ -1443,15 +1464,23 @@ class TTC_PORTAL():
         base_final = base_invertida
 
         #*********** INICIO Asignar Distancias a variables globales ********
-
+        
         if num_banco == 'CAMION_A':
             self.BASE_1_CAMION_INV = base_invertida
+            self.BASE_1_CAMION_PUNTO = base_prom
+            self.BASE_1_CAMION_DISTANCIA = distancia_promedio
         if num_banco == 'CAMION_B':
             self.BASE_2_CAMION_INV = base_invertida
+            self.BASE_2_CAMION_PUNTO = base_prom
+            self.BASE_2_CAMION_DISTANCIA = distancia_promedio
         if num_banco == 'CARRO_A':
             self.BASE_1_CARRO_INV = base_invertida
+            self.BASE_1_CARRO_PUNTO = base_prom
+            self.BASE_1_CARRO_DISTANCIA = distancia_promedio
         if num_banco == 'CARRO_B':
             self.BASE_2_CARRO_INV = base_invertida
+            self.BASE_2_CARRO_PUNTO = base_prom
+            self.BASE_2_CARRO_DISTANCIA = distancia_promedio
 
 
         #*********** FIN Asignar Distancias a variables globales ***********
@@ -4363,7 +4392,7 @@ class TTC_PORTAL():
                             "BASE_1_CARRO=1.42\n"+
                             "BASE_2_CARRO=1.42\n"+
                             "MR_CARRO=1\n"+
-                            "MR_TOTAL=2"+
+                            "MR_TOTAL=2\n"+
                             "<--COMPARAR BASE-->\n"+ 
                             "BASE_1_CAMION=0\n"+
                             "BASE_1_CAMION_INV=0\n"+
@@ -4520,4 +4549,116 @@ class TTC_PORTAL():
             self.escribirArchivoLog("Error Escribir archivo Mediciones.txt: "+str(e))
  
     def create_csv_master(self):
-        pass
+        try:   
+            hoy = datetime.today()
+            fecha_mensual = hoy.strftime("%Y-%m")          
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
+            #Ruta todos los camiones
+            ruta_base_csv = self.cargar_datos(ruta_configuraciones,"Path-master-csv")
+            nombre_csv = "CSV-MASTER-TTCSCAN-{}.csv".format(fecha_mensual)
+            ruta_master_csv = ruta_base_csv + nombre_csv
+            
+            header = ['IDCAMION', 
+                        'FECHA MEDICION', 
+                        'HORA MEDICION', 
+                        'AUTOCARGANTE',
+                        'PATENTE', 
+                        'LARGOCAMION', 
+                        'LARGOCARRO', 
+                        'BANCOSCAMION', 
+                        'BANCOSCARRO', 
+                        'ANCHOCAMION', 
+                        'ANCHOCARRO', 
+                        'GUIA', 
+                        'ALTURA_CAMION', 
+                        'BASE_1_CAMION', 
+                        'BASE_1_CAMION_PUNTO', 
+                        'BASE_1_CAMION_DISTANCIA', 
+                        'BASE_2_CAMION', 
+                        'BASE_2_CAMION_PUNTO', 
+                        'BASE_2_CAMION_DISTANCIA', 
+                        'MR_CAMION', 
+                        'ALTURA_CARRO', 
+                        'BASE_1_CARRO', 
+                        'BASE_1_CARRO_PUNTO', 
+                        'BASE_1_CARRO_DISTANCIA', 
+                        'BASE_2_CARRO', 
+                        'BASE_2_CARRO_PUNTO', 
+                        'BASE_2_CARRO_DISTANCIA', 
+                        'MR_CARRO', 
+                        'MR_TOTAL', 
+                        'VELOCIDAD_PROMEDIO_TOTAL', 
+                        'ANCHO_CAMION_CALCULADO', 
+                        'ANCHO_CARRO_CALCULADO', 
+                        'DISTANCIA_CAMION_BOTTOM', 
+                        'DISTANCIA_CARRO_BOTTOM', 
+                        'DISTANCIA_CAMION_RIGHT', 
+                        'DISTANCIA_CARRO_RIGHT', 
+                        'LARGO_CAMION_CALCULADO', 
+                        'LARGO_CARRO_CALCULADO']
+
+            if not exists(ruta_master_csv):
+                with open(ruta_master_csv, 'a', encoding='UTF8') as f:
+                    writer = csv.writer(f, delimiter=';')
+                    writer.writerow(header)
+        except Exception as e:
+            self.escribirArchivoLog("Error Crear archivo CSV-MASTER-TTCSCAN.csv: "+str(e))
+
+    def load_data_csv_master(self):
+        try:            
+            hoy = datetime.today()
+            fecha_mensual = hoy.strftime("%Y-%m")
+            fecha = hoy.strftime("%d/%m/%Y")
+            hora = hoy.strftime("%H:%M:%S")    
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
+            #Ruta todos los camiones
+            ruta_base_csv = self.cargar_datos(ruta_configuraciones,"Path-master-csv")
+            nombre_csv = "CSV-MASTER-TTCSCAN-{}.csv".format(fecha_mensual)
+            ruta_master_csv = ruta_base_csv + nombre_csv
+
+
+            row = [self.PES_ID, 
+                        fecha, 
+                        hora, 
+                        self.AUTOCARGANTE,
+                        self.MP_PATENTE, 
+                        self.LARGOCAMION, 
+                        self.LARGOCARRO, 
+                        self.BANCOSCAMION, 
+                        self.BANCOSCARRO, 
+                        self.ANCHOCAMION, 
+                        self.ANCHOCARRO, 
+                        self.GUIA, 
+                        self.ALTURA_CAMION_E, 
+                        self.BASE_1_CAMION_E, 
+                        self.BASE_1_CAMION_PUNTO, 
+                        self.BASE_1_CAMION_DISTANCIA, 
+                        self.BASE_2_CAMION_E, 
+                        self.BASE_2_CAMION_PUNTO, 
+                        self.BASE_2_CAMION_DISTANCIA, 
+                        self.MR_CAMION_E, 
+                        self.ALTURA_CARRO_E, 
+                        self.BASE_1_CARRO_E, 
+                        self.BASE_1_CARRO_PUNTO, 
+                        self.BASE_1_CARRO_DISTANCIA, 
+                        self.BASE_2_CARRO_E, 
+                        self.BASE_2_CARRO_PUNTO, 
+                        self.BASE_2_CARRO_DISTANCIA, 
+                        self.MR_CARRO_E, 
+                        self.MR_TOTAL_E, 
+                        self.VELOCIDAD_PROMEDIO_TOTAL, 
+                        self.ANCHOCAMIONCALCULADO, 
+                        self.ANCHOCARROCALCULADO, 
+                        self.DISTANCIA_CAMION_BOTTOM, 
+                        self.DISTANCIA_CARRO_BOTTOM, 
+                        self.DISTANCIA_CAMION_RIGHT, 
+                        self.DISTANCIA_CARRO_RIGHT, 
+                        self.LARGO_CAMION_LC, 
+                        self.LARGO_CARRO_LC]
+
+            with open(ruta_master_csv, 'a', encoding='UTF8', newline='') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerow(row)
+
+        except Exception as e:
+            self.escribirArchivoLog("Error cargar dato camión en archivo CSV-MASTER-TTCSCAN.csv: "+str(e))

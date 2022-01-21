@@ -272,10 +272,14 @@ while True:
             #1- Cargamos en un diccionario con la info de NPesaje.txt
             dict_npesaje = ttc.get_lines_in_file_dict(ttc.cargar_datos(ruta_configuraciones,'Path-Pesaje'))
             # print("******  dict_npesaje=",dict_npesaje)
-
+            ttc.BANCOSCAMION = dict_npesaje['BANCOSCAMION']
+            ttc.BANCOSCARRO = dict_npesaje['BANCOSCARRO']
+            ttc.GUIA = dict_npesaje['GUIA']
             # tipo_bancos_carro = dict_npesaje['BANCOSCARRO']
             # tipo_bancos_camion = dict_npesaje['BANCOSCAMION']
-            auto_cargante = dict_npesaje['AUTOCARGANTE']
+            ttc.AUTOCARGANTE = dict_npesaje['AUTOCARGANTE']
+            auto_cargante = ttc.AUTOCARGANTE 
+
 
             try:
                 # print("MIDIENDO")
