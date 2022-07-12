@@ -37,6 +37,10 @@ logging.getLogger('matplotlib.font_manager').disabled = True
 
 class TTC_PORTAL():
 #Iniciando Variables
+    # Datos Cliente
+    nombre_cliente = 'TTC Default'
+    nombre_dispositivo = 'TTC-SCAN Default'
+
     # Semáforo
     encender_verde = 'S31'
     apagar_verde = 'S30'
@@ -332,46 +336,66 @@ class TTC_PORTAL():
             self.escribirArchivoLog("Error Sacar Foto del DVR: "+str(e))
 
     def cargar_datos(self,archivo : str, dato : str):
+        try:
             with open(archivo) as contenido:
                 configuraciones = json.load(contenido)[dato]
                 return configuraciones
+        except Exception as e:
+            self.escribirArchivoLog("Error cargar_datos(): "+str(e))
 
     def escribirArchivoLog(self,mensaje):
+        hoy = datetime.today()
+        fecha_mensual = hoy.strftime("%Y-%m") 
         logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s ===> %(levelname)s ===> TTC_SCAN_Portal.exe ===> %(message)s',
-                        filename = 'E:/TTC/TTC_SCAN/SETUP/Log-Errores.log',
+                        filename = f"E:/TTC/TTC_SCAN/SETUP/Log-Errores-{fecha_mensual}.log",
                         filemode = 'a',)
         logging.info(mensaje)
 
     def leerArchivoModo(self,path,bits):
-        rT = open(path,"r")
-        y = rT.read(bits)
-        rT.close()
-        return y
+        try:
+            rT = open(path,"r")
+            y = rT.read(bits)
+            rT.close()
+            return y
+        except Exception as e:
+            self.escribirArchivoLog("Error leerArchivoModo() Modo.txt: "+str(e))
 
     def leerArchivo(self,path):
-        rT = open(path,"r")
-        y = rT.read()
-        rT.close()
-        return y
+        try:
+            rT = open(path,"r")
+            y = rT.read()
+            rT.close()
+            return y
+        except Exception as e:
+            self.escribirArchivoLog("Error leerArchivo(): "+str(e))
 
     def escribirArchivoModo(self,x):
-        ruta_directorio = self.obtener_ruta_actual()
-        ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
-        path = self.cargar_datos(ruta_configuraciones, "Path-Modo")
-        f = open(path,"w")
-        f.write(x)
-        f.close()
+        try:
+            ruta_directorio = self.obtener_ruta_actual()
+            ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+            path = self.cargar_datos(ruta_configuraciones, "Path-Modo")
+            f = open(path,"w")
+            f.write(x)
+            f.close()
+        except Exception as e:
+            self.escribirArchivoLog("Error escribirArchivoModo(): "+str(e))
 
     def crear_json(self, nombre : str, datos : dict):
-        rutaNombre = self.path+'/'+nombre+'.json'
-        with open(rutaNombre, 'w') as archivo:
-            json.dump(datos, archivo)
+        try:
+            rutaNombre = self.path+'/'+nombre+'.json'
+            with open(rutaNombre, 'w') as archivo:
+                json.dump(datos, archivo)
+        except Exception as e:
+            self.escribirArchivoLog("Error crear_json(): "+str(e))
 
     def escribirArchivo(self,mensaje,cam):
-        f = open(self.path+"/Puntos"+cam+".txt", "a")
-        f.write(mensaje)
-        f.close()
+        try:
+            f = open(self.path+"/Puntos"+cam+".txt", "a")
+            f.write(mensaje)
+            f.close()
+        except Exception as e:
+            self.escribirArchivoLog("Error crear_json(): "+str(e))
 
     def post_lines_in_file(self,lineas : list, name : str,path = path):
         try:
@@ -462,7 +486,7 @@ class TTC_PORTAL():
                 x.append(linea.rstrip('\n'))
             return x
         except Exception as e:
-            self.escribirArchivoLog("Error Leer Archivo NPesaje: "+str(e))
+            self.escribirArchivoLog("Error Leer get_lines_in_file: "+str(e))
 
     def get_lines_in_file_dict(self, path : str) -> dict:
         try:
@@ -477,7 +501,7 @@ class TTC_PORTAL():
                 temp_list=[]
             return y
         except Exception as e:
-            self.escribirArchivoLog("Error Leer Archivo NPesaje: "+str(e))
+            self.escribirArchivoLog("Error Leer get_lines_in_file_dict: "+str(e))
 
     def get_distance_from_lidar(self,ser : object) -> str:
         try:
@@ -492,37 +516,40 @@ class TTC_PORTAL():
             pass
 
     def crearCarpetaData(self):
-        ruta_directorio = self.obtener_ruta_actual()
-        ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
-        lineas = self.get_lines_in_file(self.cargar_datos(ruta_configuraciones, 'Path-Pesaje'))
-        num_pesaje = lineas[0].split('=')
-        num_pesaje = num_pesaje[1]
-        ruta_camiones = self.cargar_datos(ruta_configuraciones, 'Ruta-Camiones')
-        ruta_camiones_respaldo = self.cargar_datos(ruta_configuraciones, 'Ruta-Camiones-Respaldo')
-        respaldo_fotos = self.cargar_datos(ruta_configuraciones,"Respaldo-Fotos")
-        self.path = ruta_camiones+"/"+str(num_pesaje)
-        self.path_respaldo = ruta_camiones_respaldo+"/"+str(num_pesaje)
+        try:
+            ruta_directorio = self.obtener_ruta_actual()
+            ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+            lineas = self.get_lines_in_file(self.cargar_datos(ruta_configuraciones, 'Path-Pesaje'))
+            num_pesaje = lineas[0].split('=')
+            num_pesaje = num_pesaje[1]
+            ruta_camiones = self.cargar_datos(ruta_configuraciones, 'Ruta-Camiones')
+            ruta_camiones_respaldo = self.cargar_datos(ruta_configuraciones, 'Ruta-Camiones-Respaldo')
+            respaldo_fotos = self.cargar_datos(ruta_configuraciones,"Respaldo-Fotos")
+            self.path = ruta_camiones+"/"+str(num_pesaje)
+            self.path_respaldo = ruta_camiones_respaldo+"/"+str(num_pesaje)
 
-        # Creando carpeta para ruta principal
-        if not exists(self.path):
-            makedirs(self.path)
-            makedirs(self.path+"/Img")
-        else:
-            #print('Ya existe la carpeta se va a borrar',self.path)
-            shutil.rmtree(self.path, ignore_errors=True)
-            makedirs(self.path)
-            makedirs(self.path+"/Img")
-
-        # Creando carpeta para ruta respaldo
-        if respaldo_fotos == True:
-            if not exists(self.path_respaldo):
-                makedirs(self.path_respaldo)
-                makedirs(self.path_respaldo+"/Img")
+            # Creando carpeta para ruta principal
+            if not exists(self.path):
+                makedirs(self.path)
+                makedirs(self.path+"/Img")
             else:
                 #print('Ya existe la carpeta se va a borrar',self.path)
-                shutil.rmtree(self.path_respaldo, ignore_errors=True)
-                makedirs(self.path_respaldo)
-                makedirs(self.path_respaldo+"/Img")
+                shutil.rmtree(self.path, ignore_errors=True)
+                makedirs(self.path)
+                makedirs(self.path+"/Img")
+
+            # Creando carpeta para ruta respaldo
+            if respaldo_fotos == True:
+                if not exists(self.path_respaldo):
+                    makedirs(self.path_respaldo)
+                    makedirs(self.path_respaldo+"/Img")
+                else:
+                    #print('Ya existe la carpeta se va a borrar',self.path)
+                    shutil.rmtree(self.path_respaldo, ignore_errors=True)
+                    makedirs(self.path_respaldo)
+                    makedirs(self.path_respaldo+"/Img")
+        except Exception as e:
+            self.escribirArchivoLog("Error crearCarpetaData(): "+str(e))
 
     def check_cameras_on(self):
         
@@ -696,7 +723,7 @@ class TTC_PORTAL():
             for dev in dev_list:
                 try:
                     dev.hardware_reset()
-                    # self.escribirArchivoLog("HARDWARE RESET OK Device:{}".format(dev))
+                    self.escribirArchivoLog("HARDWARE RESET OK Device:{}".format(dev))
                     print("HARDWARE RESET OK Device:{}".format(dev))
                 except:
                     self.escribirArchivoLog("HARDWARE RESET ERROR Device:{}".format(dev))
@@ -1093,12 +1120,12 @@ class TTC_PORTAL():
                         evaluacion_cam_1 = False
 
                     # Validar que este sin error la medición camara 2
-                    # num_error2 = self.EjeZ2.count(0.0)
-                    # num_datos2 = len(self.EjeZ2)
-                    # num_ok2 = num_datos2 - num_error2
+                    num_error2 = self.EjeZ2.count(0.0)
+                    num_datos2 = len(self.EjeZ2)
+                    num_ok2 = num_datos2 - num_error2
 
-                    # if num_error2 > num_ok2:
-                    #     evaluacion_cam_2 = False
+                    if num_error2 > num_ok2:
+                        evaluacion_cam_2 = False
                     
                     # Validar que este sin error la medición camara 3
                     num_error3 = self.EjeZ3.count(0.0)
@@ -1116,13 +1143,14 @@ class TTC_PORTAL():
                     if num_error4 > num_ok4:
                         evaluacion_cam_4 = False
 
-
-                    if (evaluacion_cam_1 == False) or (evaluacion_cam_2 == False) or (evaluacion_cam_3 == False) or (evaluacion_cam_4 == False):
+                    # Se debe solo comparar las camaras superiores no las 
+                    # laterales ya que tendrán muchos 0.0 en estado inicial sin camión.
+                    if (evaluacion_cam_1 == False) or (evaluacion_cam_2 == False):
                         # Ejecutar proceso de error de cámara TOP
                         # El Proceso de Daniela se detiene hasta que se haga el Hardware reset
                         # Se envía REANUDA y en 2 segundos ESPERANDO
                         self.post_archivo_txt("CAMERAS-NOT-WORK-TEMP")
-                        self.escribirArchivoLog("Error camarás con error 0.0 Cam1: {} - Cam3: {} - Cam 4: {}".format(evaluacion_cam_1,evaluacion_cam_3,evaluacion_cam_4))
+                        self.escribirArchivoLog("Error camarás con error 0.0 Cam1: {} - Cam2: {} - Cam3: {} - Cam 4: {}".format(evaluacion_cam_1,evaluacion_cam_2,evaluacion_cam_3,evaluacion_cam_4))
                         # self.enviar_mensaje_correo("Reinicio del SISTEMA TTC_SCAN ARAUCO CON ERROR CÁMARAS 0.0")
                         #Hardware Reset 
                         isOkHR = self.realsense_hardware_reset()
@@ -1160,10 +1188,10 @@ class TTC_PORTAL():
                     time.sleep(0.5)
                     self.write_serial(self.encender_verde)
                     #Para Carlos Duplicar el NPesaje
-                    npesaje = 'C:/TTCScan/NPesaje.txt'
-                    if exists(npesaje):
-                        remove(npesaje)
-                    self.post_lines_in_file(self.get_lines_in_file(self.cargar_datos(ruta_configuraciones,'Path-Pesaje')),'NPesaje','C:/TTCScan')
+                    # npesaje = 'C:/TTCScan/NPesaje.txt'
+                    # if exists(npesaje):
+                    #     remove(npesaje)
+                    # self.post_lines_in_file(self.get_lines_in_file(self.cargar_datos(ruta_configuraciones,'Path-Pesaje')),'NPesaje','C:/TTCScan')
                     #FIN -- Para Carlos Duplicar el NPesaje
                     validar = False
                     #*****************************************
@@ -1281,15 +1309,18 @@ class TTC_PORTAL():
             self.escribirArchivoLog("Error regenerete_list_z(): "+str(e))
 
     def promedio_alturas(self, banco : list, base = int) -> int:
-        list_temp = []
-        suma_list = 0
-        for dato in banco:
-            if dato > 10:
-                list_temp.append(dato - base)
-                suma_list+=dato
+        try:
+            list_temp = []
+            suma_list = 0
+            for dato in banco:
+                if dato > 10:
+                    list_temp.append(dato - base)
+                    suma_list+=dato
 
-        prom_h = suma_list / len(list_temp)
-        return round(prom_h,2)
+            prom_h = suma_list / len(list_temp)
+            return round(prom_h,2)
+        except Exception as e:
+            self.escribirArchivoLog("Error promedio_alturas(): "+str(e))
         
     def promedio_alturas_bancos_full_estereo(self, banco : list) -> int:
         ruta_directorio = self.obtener_ruta_actual()
@@ -1315,84 +1346,105 @@ class TTC_PORTAL():
             self.escribirArchivoLog("Error promedio_alturas_bancos_full_estereo: "+str(e))
 
     def promedio_dinamico(self, val : list, activador : bool):
-        if activador == False:
-            promedio = val[0]
-        else:
-            sum_valores = 0
-            numero_elementos = 0
-            promedio = 0
-            for value in val:
-                sum_valores+=value
-            
-            numero_elementos = len(val)
-
-            if numero_elementos != 0:
-                promedio = sum_valores / numero_elementos
+        try:
+            if activador == False:
+                promedio = val[0]
             else:
-                promedio = 1
+                sum_valores = 0
+                numero_elementos = 0
+                promedio = 0
+                for value in val:
+                    sum_valores+=value
+                
+                numero_elementos = len(val)
 
-        return promedio
+                if numero_elementos != 0:
+                    promedio = sum_valores / numero_elementos
+                else:
+                    promedio = 1
+
+            return promedio
+        except Exception as e:
+            self.escribirArchivoLog("Error promedio_dinamico(): "+str(e))
 
     def calculo_metro_ruma(self, prom_h : float, ancho : float, largo : float):
-        mtr_ruma = ( prom_h * ancho * largo ) / 2.44
-        return round(mtr_ruma,2)
+        try:
+            mtr_ruma = ( prom_h * ancho * largo ) / 2.44
+            return round(mtr_ruma,2)
+        except Exception as e:
+            self.escribirArchivoLog("Error calculo_metro_ruma(): "+str(e))
     
     def obtener_camion_carro(self,lista_original : list) -> list:
-        ruta_directorio = self.obtener_ruta_actual()
-        ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
-        lista_indice = []
-        limites_altura_obtener_camion = self.cargar_datos(ruta_configuraciones,"LIMITES-ALTURA-OBTENER-CAMION")
-        # print(limites_altura_obtener_camion)
-        #Detectar incio cámion y fin carro
-        for i, lista in enumerate(lista_original):
+        try:
+            ruta_directorio = self.obtener_ruta_actual()
+            ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+            lista_indice = []
+            limites_altura_obtener_camion = self.cargar_datos(ruta_configuraciones,"LIMITES-ALTURA-OBTENER-CAMION")
+            # print(limites_altura_obtener_camion)
+            #Detectar incio cámion y fin carro
+            for i, lista in enumerate(lista_original):
+                if lista == None or lista == '':
+                    pass
+                else:
+                    if (int(lista) < limites_altura_obtener_camion[0]) \
+                        and (int(lista) > limites_altura_obtener_camion[1]):
+                        # print('Lista:',i,'-',lista)
+                        lista_indice.append(i)
 
-            
-            if lista == None or lista == '':
-                pass
-            else:
-                if int(lista) < limites_altura_obtener_camion[0] \
-                    and int(lista) > limites_altura_obtener_camion[1]:
-                    lista_indice.append(i)
-        return lista_indice
+            return lista_indice
+        except Exception as e:
+            self.escribirArchivoLog("Error obtener_camion_carro(): "+str(e))
 
     def detectar_fin_camion(self,lista_z : list,lista_x : list, i_carro : int, i_camion : int) -> int:
-        list_temp = []
-        i_cami = lista_x.index(i_camion+1)
-        i_carr = lista_x.index(i_carro)
+        try:
+            list_temp = []
+            i_cami = lista_x.index(i_camion+1)
+            i_carr = lista_x.index(i_carro)
 
-        for i, dato in enumerate(lista_x):
+            for i, dato in enumerate(lista_x):
 
-            if i < i_cami and i > i_carr and lista_z[i] < 400 and lista_z[i] != 0.0:
-                list_temp.append(dato)
-            
+                if i < i_cami and i > i_carr and lista_z[i] < 400 and lista_z[i] != 0.0:
+                    list_temp.append(dato)
+                
 
-        indice_fin_camion = list_temp[1]
+            indice_fin_camion = list_temp[1]
 
-        return indice_fin_camion 
+            return indice_fin_camion 
+        except Exception as e:
+            self.escribirArchivoLog("Error detectar_fin_camion(): "+str(e))
 
     def detectar_inicio_carro(self,lista_z : list,lista_x : list) -> int:
-        list_temp = []
-        lista_z.reverse()
-        lista_x.reverse()
+        try:
+            list_temp = []
+            lista_z.reverse()
+            lista_x.reverse()
 
-        for i, dato in enumerate(lista_z):
-            if dato < 400:
-                list_temp.append(lista_x[i])
-            else:
-                break
+            for i, dato in enumerate(lista_z):
+                if dato < 400:
+                    list_temp.append(lista_x[i])
+                else:
+                    break
 
-        indice_fin_camion = list_temp[-1]
-        
+            indice_fin_camion = list_temp[-1]
+            
 
-        return indice_fin_camion
+            return indice_fin_camion
+        except Exception as e:
+            self.escribirArchivoLog("Error detectar_inicio_carro(): "+str(e))
 
     def inicioCamion(self, lista_indice : list) -> int:
-        inicio_camion = lista_indice[0]
-        return inicio_camion
+        try:
+            inicio_camion = lista_indice[0]
+            return inicio_camion
+        except Exception as e:
+            self.escribirArchivoLog("Error inicioCamion(): "+str(e))
 
     def finCarro(self, lista_indice : list) -> int:
-        fin_carro = lista_indice[-1]
-        return fin_carro
+        try:
+            fin_carro = lista_indice[-1]
+            return fin_carro
+        except Exception as e:
+            self.escribirArchivoLog("Error finCarro(): "+str(e))
 
     def detectar_base_banco_full_estereo(self,banco_x : list,
                                         num_banco : int, 
@@ -1963,10 +2015,10 @@ class TTC_PORTAL():
         if not exists(carpeta):
             makedirs(carpeta)
         else:
-            pass
             #print('Ya existe la carpeta se va a borrar')
             #shutil.rmtree(carpeta, ignore_errors=True)
             #makedirs(carpeta)
+            pass
 
     def filtrar_cabina(self,lista_original_Top_z : list,
                             inicio_camion : int,
@@ -1975,46 +2027,46 @@ class TTC_PORTAL():
                             camion_x : list,
                             lista_top_z : list,
                             lista_top_x : list):
-        ruta_directorio = self.obtener_ruta_actual()
-        ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
-        limites_filtrar_cabina = self.cargar_datos(ruta_configuraciones,"LIMITES-FILTRAR-CABINA")
+        # ruta_directorio = self.obtener_ruta_actual()
+        # ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+        # limites_filtrar_cabina = self.cargar_datos(ruta_configuraciones,"LIMITES-FILTRAR-CABINA")
         num_muestras_camion = len(lista_original_Top_z[inicio_camion:fin_camion])
         zona_fin_cabina = ( round(num_muestras_camion * 0.20) ) + inicio_camion
         # print( num_muestras_camion, round(num_muestras_camion * 0.20) , zona_fin_cabina )
 
-        activador = False
-        lista_valores = []
-        fin_cabina = 0
-        list_temp_consultar = []
-        list_temp_consultar = lista_original_Top_z[inicio_camion:fin_camion]
-        for i, z in enumerate(camion_z):
-            #print('0',i,z)
-            if z > limites_filtrar_cabina[1] and z < limites_filtrar_cabina[0]:
-                #print('1',i,z)
-                lista_valores.append(z)
-                promedio = self.promedio_dinamico(lista_valores,activador)
-                activador=True
-                diferencia = abs(promedio - z)
-                if diferencia < limites_filtrar_cabina[2]:
-                    fin_cabina = camion_x[i]
-                else:
-                    fin_cabina = camion_x[i]
-                    break
-            elif z == 0.0 and i > 1:
-                #print('2',i,z)
-                limpiar_lista = []
-                for n in list_temp_consultar[i][limites_filtrar_cabina[3]:limites_filtrar_cabina[4]]:
-                    if n > limites_filtrar_cabina[1]:
-                        limpiar_lista.append(n)
-                promedio_vecinos = self.promedio_dinamico(limpiar_lista,True)
-                if promedio_vecinos > limites_filtrar_cabina[0]:
-                    fin_cabina = camion_x[i]
-                    break
-                    #print('promedio',i,z,promedio_vecinos)
-                    #continue
-            elif z > limites_filtrar_cabina[0] and i > 1 and z < camion_z[i-1]:
-                fin_cabina = camion_x[i]
-                break
+        # activador = False
+        # lista_valores = []
+        # fin_cabina = 0
+        # list_temp_consultar = []
+        # list_temp_consultar = lista_original_Top_z[inicio_camion:fin_camion]
+        # for i, z in enumerate(camion_z):
+        #     #print('0',i,z)
+        #     if z > limites_filtrar_cabina[1] and z < limites_filtrar_cabina[0]:
+        #         #print('1',i,z)
+        #         lista_valores.append(z)
+        #         promedio = self.promedio_dinamico(lista_valores,activador)
+        #         activador=True
+        #         diferencia = abs(promedio - z)
+        #         if diferencia < limites_filtrar_cabina[2]:
+        #             fin_cabina = camion_x[i]
+        #         else:
+        #             fin_cabina = camion_x[i]
+        #             break
+        #     elif z == 0.0 and i > 1:
+        #         #print('2',i,z)
+        #         limpiar_lista = []
+        #         for n in list_temp_consultar[i][limites_filtrar_cabina[3]:limites_filtrar_cabina[4]]:
+        #             if n > limites_filtrar_cabina[1]:
+        #                 limpiar_lista.append(n)
+        #         promedio_vecinos = self.promedio_dinamico(limpiar_lista,True)
+        #         if promedio_vecinos > limites_filtrar_cabina[0]:
+        #             fin_cabina = camion_x[i]
+        #             break
+        #             #print('promedio',i,z,promedio_vecinos)
+        #             #continue
+        #     elif z > limites_filtrar_cabina[0] and i > 1 and z < camion_z[i-1]:
+        #         fin_cabina = camion_x[i]
+        #         break
 
         #PRUEBA
         camion_z_final = lista_top_z[zona_fin_cabina:fin_camion]
@@ -2270,12 +2322,14 @@ class TTC_PORTAL():
         ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
         Constante_Base = self.cargar_datos(ruta_configuraciones,"Constante-Base")
         Base_Dinamica = self.cargar_datos(ruta_configuraciones,"Base-Dinamica")
+        APLICA_BASE = self.cargar_datos(ruta_configuraciones,"activar-ancho-calculado")
         id_pesaje = self.PES_ID
 
         if Base_Dinamica == True:
             base = self.detectar_base_banco_full_estereo(banco_x,num_banco,id_pesaje)
-            base_right = self.detectar_base_banco_full_estereo_right(banco_x,num_banco,id_pesaje)
-            self.detectar_base_banco_full_estereo_bottom(banco_x,num_banco,id_pesaje)
+            if APLICA_BASE == True:
+                base_right = self.detectar_base_banco_full_estereo_right(banco_x,num_banco,id_pesaje)
+                self.detectar_base_banco_full_estereo_bottom(banco_x,num_banco,id_pesaje)
         else:
             base = Constante_Base
 
@@ -2399,7 +2453,7 @@ class TTC_PORTAL():
                     SINCRONIZADO = '0'\
                     WHERE MP_ID = '"+str(IDMEDICION)+"'"
                         
-        # print(query)
+        print(query)
 
         #Ejecutar método obtener conección con DB
         #print((host_db, usuario_db, clave_db, nombre_db))
@@ -2413,9 +2467,6 @@ class TTC_PORTAL():
 
         #Cerrar conección DB
         self.cerrar_db(conec_db)
-
-
-        #===========   FIN INSERTAR EN BASE DE DATOS   =========== 
 
     def guardar_db_estereo_lc(self):
         #===========   INSERTAR EN BASE DE DATOS   =========== 
@@ -2473,7 +2524,7 @@ class TTC_PORTAL():
                     PROM_BASE_CARRO_AP = '"+str(PROM_BASE_CARRO)+"', MP_PATENTE_CARRO = '"+str(MP_PATENTE_CARRO)+"', \
                     SINCRONIZADO = '0'\
                     WHERE MP_ID = '"+str(IDMEDICION)+"'"
-        # print(query)
+        print(query)
 
         #Ejecutar método obtener conección con DB
         #print((host_db, usuario_db, clave_db, nombre_db))
@@ -2487,9 +2538,6 @@ class TTC_PORTAL():
 
         #Cerrar conección DB
         self.cerrar_db(conec_db)
-
-
-        #===========   FIN INSERTAR EN BASE DE DATOS   =========== 
 
     def guardar_db_estereo_defecto(self):
         try:
@@ -2552,7 +2600,7 @@ class TTC_PORTAL():
                     PROM_BASE_CARRO_AP = '"+str(PROM_BASE_CARRO)+"', MP_PATENTE_CARRO = '"+str(MP_PATENTE_CARRO)+"', \
                     SINCRONIZADO = '0'\
                     WHERE MP_ID = '"+str(IDMEDICION)+"'"
-            # print(query)
+            print(query)
             #     query = "INSERT INTO medicion_portal (PES_ID, MP_FECHA, MP_HORA, MP_PATENTE, MRCAMION_AP, MRCARRO_AP, TOTALMR_AP, INICIOCABINA_AP, INICIOCAMION_AP, FINCAMION_AP, INICIOCARRO_AP, FINCARRO_AP, PROM_ALTURA_CAMION_AP, PROM_BASE_CAMION_AP, PROM_ALTURA_CARRO_AP, PROM_BASE_CARRO_AP, MP_PATENTE_CARRO) VALUES ('"+str(PES_ID)+"', '"+str(MP_FECHA)+"', '"+str(MP_HORA)+"', '"+str(MP_PATENTE)+"', '"+str(MRCAMION_AP)+"', '"+str(MRCARRO_AP)+"', '"+str(TOTALMR_AP)+"', '"+str(INICIOCABINA_AP)+"', '"+str(INICIOCAMION_AP)+"', '"+str(FINCAMION_AP)+"', '"+str(INICIOCARRO_AP)+"', '"+str(FINCARRO_AP)+"', '"+str(ALTURA_CAMION)+"', '"+str(PROM_BASE_CAMION)+"', '"+str(ALTURA_CARRO)+"', '"+str(PROM_BASE_CARRO)+"', '"+str(MP_PATENTE_CARRO)+"')"
             #     print(query)
 
@@ -2592,7 +2640,7 @@ class TTC_PORTAL():
             else:
                 return None
         except Exception as e:
-            self.escribirArchivoLog("Error Leer Archivo NPesaje-SYNC: "+str(e))
+            self.escribirArchivoLog("Error get_lidar_sync_data: "+str(e))
     
     def crearCarpetaExportar(self):
         ruta_directorio = self.obtener_ruta_actual()
@@ -2624,6 +2672,10 @@ class TTC_PORTAL():
             ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
             ruta_exportar_camiones = self.cargar_datos(ruta_configuraciones, 'Path-Exportar')
             ruta_camiones = self.cargar_datos(ruta_configuraciones, 'Ruta-Camiones')
+            TOP = self.cargar_datos(ruta_configuraciones, 'RS-TOP-ACTIVE')
+            CORNER = self.cargar_datos(ruta_configuraciones, 'RS-CORNER-ACTIVE')
+            BOTTOM = self.cargar_datos(ruta_configuraciones, 'RS-TOP-ACTIVE')
+            RIGHT = self.cargar_datos(ruta_configuraciones, 'RS-TOP-ACTIVE')
 
             intervalo_foto_top = self.cargar_datos(ruta_configuraciones, 'intervalo-foto-top')
 
@@ -2631,38 +2683,42 @@ class TTC_PORTAL():
             ruta_destino = ruta_exportar_camiones+"/"+str(self.PES_ID)
 
             #Copiar archivos a PC Romanero
-            if exists(ruta_original+'/Puntos-Top.json'):
-                shutil.copy(ruta_original+'/Puntos-Top.json', ruta_destino+'/Puntos-Top.json')
+            if TOP:
+                if exists(ruta_original+'/Puntos-Top.json'):
+                    shutil.copy(ruta_original+'/Puntos-Top.json', ruta_destino+'/Puntos-Top.json')
+                
+                # if exists(ruta_original+'/Puntos-Top.txt'):
+                #     shutil.copy(ruta_original+'/Puntos-Top.txt', ruta_destino+'/Puntos-Top.txt')
             
-            if exists(ruta_original+'/Puntos-Corner.json'):
-                shutil.copy(ruta_original+'/Puntos-Corner.json', ruta_destino+'/Puntos-Corner.json')
+            if CORNER:
+                if exists(ruta_original+'/Puntos-Corner.json'):
+                    shutil.copy(ruta_original+'/Puntos-Corner.json', ruta_destino+'/Puntos-Corner.json')
+                
+                # if exists(ruta_original+'/Puntos-Corner.txt'):
+                #     shutil.copy(ruta_original+'/Puntos-Corner.txt', ruta_destino+'/Puntos-Corner.txt')
             
-            if exists(ruta_original+'/Puntos-Bottom.json'):
-                shutil.copy(ruta_original+'/Puntos-Bottom.json', ruta_destino+'/Puntos-Bottom.json')
+            if BOTTOM:
+                if exists(ruta_original+'/Puntos-Bottom.json'):
+                    shutil.copy(ruta_original+'/Puntos-Bottom.json', ruta_destino+'/Puntos-Bottom.json')
+                
+                # if exists(ruta_original+'/Puntos-Bottom.txt'):
+                #     shutil.copy(ruta_original+'/Puntos-Bottom.txt', ruta_destino+'/Puntos-Bottom.txt')
             
-            if exists(ruta_original+'/Puntos-Bottom.json'):
-                shutil.copy(ruta_original+'/Puntos-Right.json', ruta_destino+'/Puntos-Bottom.json')
-            
-            if exists(ruta_original+'/Puntos-Top.txt'):
-                shutil.copy(ruta_original+'/Puntos-Top.txt', ruta_destino+'/Puntos-Top.txt')
-            
-            if exists(ruta_original+'/Puntos-Corner.txt'):
-                shutil.copy(ruta_original+'/Puntos-Corner.txt', ruta_destino+'/Puntos-Corner.txt')
-            
-            if exists(ruta_original+'/Puntos-Bottom.txt'):
-                shutil.copy(ruta_original+'/Puntos-Bottom.txt', ruta_destino+'/Puntos-Bottom.txt')
-            
-            if exists(ruta_original+'/Puntos-Bottom.txt'):
-                shutil.copy(ruta_original+'/Puntos-Right.txt', ruta_destino+'/Puntos-Bottom.txt')
+            if RIGHT:
+                if exists(ruta_original+'/Puntos-Right.json'):
+                    shutil.copy(ruta_original+'/Puntos-Right.json', ruta_destino+'/Puntos-Right.json')
+                
+                # if exists(ruta_original+'/Puntos-Right.txt'):
+                #     shutil.copy(ruta_original+'/Puntos-Right.txt', ruta_destino+'/Puntos-Right.txt')
             
             if exists(ruta_original+'/Datos-Camion.txt'):
                 shutil.copy(ruta_original+'/Datos-Camion.txt', ruta_destino+'/Datos-Camion.txt')
             
-            if exists(ruta_original+'/Datos-Camion.txt'):
-                shutil.copy(ruta_original+'/Datos-Camion.txt', ruta_destino+'/Datos-Camion.txt')
+            if exists(ruta_original+'/INFO-CAMARAS.txt'):
+                shutil.copy(ruta_original+'/INFO-CAMARAS.txt', ruta_destino+'/INFO-CAMARAS.txt')
             
-            if exists(ruta_original+'/'+str(self.PES_ID)+'.txt'):
-                shutil.copy(ruta_original+'/'+str(self.PES_ID)+'.txt', ruta_destino+'/'+str(self.PES_ID)+'.txt')
+            # if exists(ruta_original+'/'+str(self.PES_ID)+'.txt'):
+            #     shutil.copy(ruta_original+'/'+str(self.PES_ID)+'.txt', ruta_destino+'/'+str(self.PES_ID)+'.txt')
             
             if exists(ruta_original+'/Mediciones-'+str(self.PES_ID)+'.txt'):
                 shutil.copy(ruta_original+'/Mediciones-'+str(self.PES_ID)+'.txt', ruta_destino+'/Mediciones-'+str(self.PES_ID)+'.txt')
@@ -2675,6 +2731,7 @@ class TTC_PORTAL():
                 shutil.copytree(ruta_original+'/Img/Resultado_Base_banco', ruta_destino+'/Img/Resultado_Base_banco')
             #Copiar carpeta de imagen graficas
             if exists(ruta_original+'/Img/Graficas'):
+                print('SI EXISTE GRAFICA')
                 if exists(ruta_destino+'/Img/Graficas'):
                     shutil.rmtree(ruta_destino+'/Img/Graficas', ignore_errors=True)
                 shutil.copytree(ruta_original+'/Img/Graficas', ruta_destino+'/Img/Graficas')
@@ -2731,6 +2788,10 @@ class TTC_PORTAL():
         CONSTANTE_BASE = self.cargar_datos(ruta_configuraciones, "constante-base")
         CONSTANTE_ANCHO = self.cargar_datos(ruta_configuraciones, "constante-ancho")
         limites_error_altura_base = self.cargar_datos(ruta_configuraciones, "LIMITES-ERROR-ALTURA-BASE")
+        calcular_ancho_camion = self.cargar_datos(ruta_configuraciones, "activar-ancho-calculado")
+        aplicar_ancho_camion = self.cargar_datos(ruta_configuraciones, "usar-ancho-calculado")
+        ANCHO_MIN = self.cargar_datos(ruta_configuraciones, "ancho-min")
+        ANCHO_MAX = self.cargar_datos(ruta_configuraciones, "ancho-max")
 
         camion_z_final = lista_top_z[indice_inicio_parte:indice_fin_parte]
         camion_x_final = lista_top_x[indice_inicio_parte:indice_fin_parte]
@@ -2803,10 +2864,10 @@ class TTC_PORTAL():
         # if base_grupo2 > limites_error_altura_base[0] or base_grupo2 < limites_error_altura_base[1]:
         #     base_grupo2 = CONSTANTE_BASE
         #BASE INV
-        print("base_grupo1:",base_grupo1)
-        print("base_grupo2:",base_grupo2)
-        print("limites_error_altura_base[0]:",limites_error_altura_base[0],
-                "limites_error_altura_base[1]:",limites_error_altura_base[1])
+        # print("base_grupo1:",base_grupo1)
+        # print("base_grupo2:",base_grupo2)
+        # print("limites_error_altura_base[0]:",limites_error_altura_base[0],
+        #         "limites_error_altura_base[1]:",limites_error_altura_base[1])
         if base_grupo1 < limites_error_altura_base[0] or base_grupo1 > limites_error_altura_base[1]:
             base_grupo1 = CONSTANTE_BASE
         if base_grupo2 < limites_error_altura_base[0] or base_grupo2 > limites_error_altura_base[1]:
@@ -2879,19 +2940,9 @@ class TTC_PORTAL():
         # Para calculo_ancho_automatico(bool_parte) el argumento
         # bool_parte donde 0 es el valor para camiones y 1 el valor
         # para el carro.
-
-        # try:
-        #     # Ejecutar Función Calculo Ancho Automático
-        #     # ancho_camion = self.calculo_ancho_automatico(0)
-        #     ancho_camion_calculado = self.calculo_ancho_automatico(0)
-        #     self.ANCHOCAMIONCALCULADO = ancho_camion_calculado
-        #     print("ancho_camion_calculado:",ancho_camion_calculado)
-        # except Exception as e:
-        #     # Si falla el calculo automático se usa el valor de npesaje
-        #     pass
-        if parte_camion == 'CAMION':
+        if (calcular_ancho_camion == True) and (parte_camion == 'CAMION'):
             try:
-                # datos_ancho_camion_preprocesados = 
+                # datos_ancho_camion_preprocesados
                 ancho_camion_calculado = self.preprocesamiento_datos_ancho(indice_inicio_parte + perdida_borde,
                                                         indice_fin_parte - perdida_borde,
                                                         ruta_camion,
@@ -2900,13 +2951,19 @@ class TTC_PORTAL():
             except Exception as e:
                 pass
 
-
-        ancho_camion = float(dict_npesaje['ANCHOCAMION'])
+        if aplicar_ancho_camion == False:
+            ancho_camion = float(dict_npesaje['ANCHOCAMION'])
+        else:
+            ancho_camion = self.ANCHO_CAMION_CALCULADO
 
         if ancho_camion > 100:
             ancho_camion = round(ancho_camion / 100,2)
             
-        # print("ancho_camion:",ancho_camion)
+        if (ancho_camion < ANCHO_MAX) and  (ancho_camion > ANCHO_MIN):
+            ancho_camion = ancho_camion
+        else:
+            ancho_camion = CONSTANTE_ANCHO
+            
         self.ANCHOCAMION = ancho_camion
         #************** FIN CALCULO ANCHO CAMION ***************
 
@@ -2920,23 +2977,14 @@ class TTC_PORTAL():
         largo_carro = float(dict_npesaje[largo_carro_dict])
         if largo_carro > 100:
             largo_carro = round(largo_carro / 100,2)
+
         self.LARGOCARRO = largo_carro
 
         #************** INICIO CALCULO ANCHO CARRO ************
         # Para calculo_ancho_automatico(bool_parte) el argumento
         # bool_parte donde 0 es el valor para camiones y 1 el valor
         # para el carro.
-
-        # try:
-        #     # Ejecutar Función Calculo Ancho Automático
-        #     # ancho_carro = self.calculo_ancho_automatico(1)
-        #     ancho_carro_calculado = self.calculo_ancho_automatico(1)
-        #     self.ANCHOCARROCALCULADO = ancho_carro_calculado
-        #     print("ancho_carro_calculado:",ancho_carro_calculado)
-        # except Exception as e:
-        #     # Si falla el calculo automático se usa el valor de npesaje
-        #     pass
-        if parte_camion == 'CARRO':
+        if (calcular_ancho_camion == True) and (parte_camion == 'CARRO'):
             try:
                 # datos_ancho_camion_preprocesados = 
                 ancho_carro_calculado = self.preprocesamiento_datos_ancho(indice_inicio_parte + perdida_borde,
@@ -2946,13 +2994,20 @@ class TTC_PORTAL():
                 self.ANCHO_CARRO_CALCULADO = ancho_carro_calculado
             except Exception as e:
                 pass
-        
-        ancho_carro = float(dict_npesaje['ANCHOCARRO'])
+
+        if aplicar_ancho_camion == False:
+            ancho_carro = float(dict_npesaje['ANCHOCARRO'])
+        else:
+            ancho_carro = self.ANCHO_CARRO_CALCULADO
 
         if ancho_carro > 100:
             ancho_carro = round(ancho_carro / 100,2)
             
-        # print("ancho_carro:",ancho_carro)
+        if (ancho_carro < ANCHO_MAX) and  (ancho_carro > ANCHO_MIN):
+            ancho_carro = ancho_carro
+        else:
+            ancho_carro = CONSTANTE_ANCHO
+
         self.ANCHOCARRO = ancho_carro
         #************** FIN CALCULO ANCHO CARRO ***************
 
@@ -3023,17 +3078,17 @@ class TTC_PORTAL():
                 self.LARGO_CAMION_LC = distancia_parte_lc
                 self.MR_CAMION_LC = mtr_ruma_lc
                 
-                # print("**** DATOS CAMION ****")
-                # print("Promedio de Altura: ",prom_h_full)
-                # print("Base 1: ",base_grupo1)
-                # print("Base 2: ",base_grupo2)
-                # print("Ancho Camión: ",ancho_camion)
-                # print("MR E: ",mtr_ruma_e)
-                # print("Promedio de Altura LC: ",prom_h_full_lc)
-                # print("Base CONSTANTE: ",CONSTANTE_BASE)
-                # print("Ancho Camión CONSTANTE: ",CONSTANTE_ANCHO)
-                # print("Largo Trozo Calculado: ",distancia_parte_lc)
-                # print("MR LC: ",mtr_ruma_lc)
+                print("**** DATOS CAMION ****")
+                print("Promedio de Altura: ",prom_h_full)
+                print("Base 1: ",base_grupo1)
+                print("Base 2: ",base_grupo2)
+                print("Ancho Camión: ",ancho_camion)
+                print("MR E: ",mtr_ruma_e)
+                print("Promedio de Altura LC: ",prom_h_full_lc)
+                print("Base CONSTANTE: ",CONSTANTE_BASE)
+                print("Ancho Camión CONSTANTE: ",CONSTANTE_ANCHO)
+                print("Largo Trozo Calculado: ",distancia_parte_lc)
+                print("MR LC: ",mtr_ruma_lc)
                 #============   FIN Guardar variables globales   ===========
             else:
                 #=============   Obtener Largo de trozo Automatico en función a la velocidad del camión   ============
@@ -3061,12 +3116,12 @@ class TTC_PORTAL():
                 self.LARGO_CAMION_LC = distancia_parte_lc
                 self.MR_CAMION_LC = mtr_ruma_lc
 
-                # print("**** DATOS CAMION ****")
-                # print("Promedio de Altura LC: ",prom_h_full_lc)
-                # print("Base CONSTANTE: ",CONSTANTE_BASE)
-                # print("Ancho Camión CONSTANTE: ",CONSTANTE_ANCHO)
-                # print("Largo Trozo Calculado: ",distancia_parte_lc)
-                # print("MR LC: ",mtr_ruma_lc)
+                print("**** DATOS CAMION ****")
+                print("Promedio de Altura LC: ",prom_h_full_lc)
+                print("Base CONSTANTE: ",CONSTANTE_BASE)
+                print("Ancho Camión CONSTANTE: ",CONSTANTE_ANCHO)
+                print("Largo Trozo Calculado: ",distancia_parte_lc)
+                print("MR LC: ",mtr_ruma_lc)
                 #============   FIN Guardar variables globales   ===========
         elif parte_camion == 'CARRO':
             if largo_carro != '' or n_bancos_carro != '':
@@ -3189,7 +3244,7 @@ class TTC_PORTAL():
                                                 velocidad_camion : float,
                                                 ruta_camion : str):
 
-        print("AUTOCARGANTE")
+        # print("AUTOCARGANTE")
 
         ruta_directorio = self.obtener_ruta_actual()
         ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
@@ -3198,6 +3253,10 @@ class TTC_PORTAL():
         CONSTANTE_BASE = self.cargar_datos(ruta_configuraciones, "constante-base")
         CONSTANTE_ANCHO = self.cargar_datos(ruta_configuraciones, "constante-ancho")
         limites_error_altura_base = self.cargar_datos(ruta_configuraciones, "LIMITES-ERROR-ALTURA-BASE")
+        calcular_ancho_camion = self.cargar_datos(ruta_configuraciones, "activar-ancho-calculado")
+        aplicar_ancho_camion = self.cargar_datos(ruta_configuraciones, "usar-ancho-calculado")
+        ANCHO_MIN = self.cargar_datos(ruta_configuraciones, "ancho-min")
+        ANCHO_MAX = self.cargar_datos(ruta_configuraciones, "ancho-max")
 
         camion_z_final = lista_top_z[indice_inicio_parte:indice_fin_parte]
         camion_x_final = lista_top_x[indice_inicio_parte:indice_fin_parte]
@@ -3266,9 +3325,11 @@ class TTC_PORTAL():
         # if base_grupo2 > limites_error_altura_base[0] or base_grupo2 < limites_error_altura_base[1]:
         #     base_grupo2 = CONSTANTE_BASE
         #BASE INV
-        if base_grupo1 < limites_error_altura_base[0] or base_grupo1 > limites_error_altura_base[1]:
+        if (base_grupo1 < limites_error_altura_base[0]) or \
+            (base_grupo1 > limites_error_altura_base[1]):
             base_grupo1 = CONSTANTE_BASE
-        if base_grupo2 < limites_error_altura_base[0] or base_grupo2 > limites_error_altura_base[1]:
+        if (base_grupo2 < limites_error_altura_base[0]) or \
+            (base_grupo2 > limites_error_altura_base[1]):
             base_grupo2 = CONSTANTE_BASE
         base_promedio_parte = ( base_grupo1 + base_grupo2 ) / 2
         
@@ -3344,19 +3405,9 @@ class TTC_PORTAL():
         # Para calculo_ancho_automatico(bool_parte) el argumento
         # bool_parte donde 0 es el valor para camiones y 1 el valor
         # para el carro.
-
-        # try:
-        #     # Ejecutar Función Calculo Ancho Automático
-        #     # ancho_camion = self.calculo_ancho_automatico(0)
-        #     ancho_camion_calculado = self.calculo_ancho_automatico(0)
-        #     self.ANCHOCAMIONCALCULADO = ancho_camion_calculado
-        #     print("ancho_camion_calculado:",ancho_camion_calculado)
-        # except Exception as e:
-        #     # Si falla el calculo automático se usa el valor de npesaje
-        #     pass
-        if parte_camion == 'CAMION':
+        if (calcular_ancho_camion == True) and (parte_camion == 'CAMION'):
             try:
-                # datos_ancho_camion_preprocesados = 
+                # datos_ancho_camion_preprocesados
                 ancho_camion_calculado = self.preprocesamiento_datos_ancho(indice_inicio_parte + perdida_borde,
                                                         indice_fin_parte - perdida_borde,
                                                         ruta_camion,
@@ -3365,13 +3416,19 @@ class TTC_PORTAL():
             except Exception as e:
                 pass
 
-
-        ancho_camion = float(dict_npesaje['ANCHOCAMION'])
+        if aplicar_ancho_camion == False:
+            ancho_camion = float(dict_npesaje['ANCHOCAMION'])
+        else:
+            ancho_camion = self.ANCHO_CAMION_CALCULADO
 
         if ancho_camion > 100:
             ancho_camion = round(ancho_camion / 100,2)
             
-        # print("ancho_camion:",ancho_camion)
+        if (ancho_camion < ANCHO_MAX) and  (ancho_camion > ANCHO_MIN):
+            ancho_camion = ancho_camion
+        else:
+            ancho_camion = CONSTANTE_ANCHO
+            
         self.ANCHOCAMION = ancho_camion
         #************** FIN CALCULO ANCHO CAMION ***************
 
@@ -3655,6 +3712,84 @@ class TTC_PORTAL():
 
             #self.graficar3d_nveces(carpeta = id_camion,kwargs = graficar) 
             self.graficar3d_nveces(carpeta = id_camion,ruta_camion = ruta_camion,kwargs = graficar) 
+        except Exception as e:
+            self.escribirArchivoLog("Error al graficar 3D: "+str(e))
+        
+    def post_graficar_3D_soloCamion(self,lista_graficar_camion : list):
+        try:
+            id_camion = self.PES_ID
+            #Instanciar Modulos TTC
+            #ttc = TTC()
+            #Obtener ruta directorio actual
+            #ruta_directorio = ttc.obtener_ruta_actual()
+            #Ruta archivos configuraciones.json
+            ruta_configuraciones = "E:/TTC/TTC_SCAN/SETUP/configuraciones.json"
+            #Ruta todos los camiones
+            ruta_camiones = self.cargar_datos(ruta_configuraciones,"Ruta-Camiones")
+            limites_graficar_3d = self.cargar_datos(ruta_configuraciones,"LIMITES-GRAFICAR-3D")
+            #Ruta camión específico para medir
+            ruta_camion = ruta_camiones+"/"+id_camion
+            lista_original_Top_x = self.cargar_datos(ruta_camion+'/Puntos-Top.json','x')
+            lista_original_Top_y = self.cargar_datos(ruta_camion+'/Puntos-Top.json','y')
+            lista_original_Top_z = self.cargar_datos(ruta_camion+'/Puntos-Top.json','z')
+            lista_original_Top_x = self.regenerete_list_z(lista_original_Top_x)
+            lista_original_Top_y = self.regenerete_list_z(lista_original_Top_y)
+            lista_original_Top_z = self.regenerete_list_z(lista_original_Top_z)
+            lista_top_x = []
+            lista_top_y = []
+            lista_top_z = []
+
+            for i, top in enumerate(lista_original_Top_z):
+                lista_top_z.append(top[limites_graficar_3d[0]:limites_graficar_3d[1]])
+                lista_top_x.append(lista_original_Top_x[i][limites_graficar_3d[0]:limites_graficar_3d[1]])
+                lista_top_y.append(lista_original_Top_y[i][limites_graficar_3d[0]:limites_graficar_3d[1]])
+
+            
+            
+            inicio_cabina =  int(self.INICIOCABINA_AP)
+            inicio_camion =  int(self.INICIOCAMION_AP)
+            fin_camion = int(self.FINCAMION_AP)
+            # inicio_carro = int(self.INICIOCARRO_AP)
+            # fin_carro = int(self.FINCARRO_AP)
+            
+            """        
+            print("inicio_cabina:",inicio_cabina)
+            print("inicio_camion:",inicio_camion)
+            print("fin_camion:",fin_camion)
+            print("inicio_carro:",inicio_carro)
+            print("fin_carro:",fin_carro)
+            """
+
+            graficar = {}
+            dot_camion = 1
+            dot_partes = 5
+            
+            if inicio_camion != 0 and \
+                fin_camion != 0:
+
+                #Obtener Inicio y Fin desde los labels
+                print("MR TOTAL E",self.MR_TOTAL_E)
+                MR_TOTALCAMION = 'MR_TOTAL='+str(round((self.MR_CAMION_E + self.MR_CARRO_E),2))
+
+                # print("MR CAMION E",self.MR_CAMION_E)
+                # MR_CAMION = 'MR_CAMION='+str(self.MR_CAMION_E)
+
+                # print("MR CARRO E",self.MR_CARRO_E)
+                # MR_CARRO = 'MR_CARRO='+str(self.MR_CARRO_E)
+
+                #Separación Partes
+                camion_z = lista_top_z[inicio_cabina:fin_camion]
+                camion_y = lista_top_y[inicio_cabina:fin_camion]
+                camion_x = lista_top_x[inicio_cabina:fin_camion]
+                # print(camion_z[-1])
+                # print(len(camion_z[0]))
+
+                x_carro, y_carro, z_carro = self.listas_para_graficar_3D(camion_x,camion_z,camion_y)
+                x_b4, y_b4, z_b4 = self.listas_para_graficar_3D_estereo(lista_graficar_camion)
+                graficar['CamionTotal'] = [x_carro, y_carro, z_carro, dot_camion,MR_TOTALCAMION]
+                graficar['Camion'] = [x_b4, y_b4, z_b4,dot_partes]
+
+            self.graficar3d_nveces_solocamion(carpeta = id_camion,ruta_camion = ruta_camion,kwargs = graficar) 
         except Exception as e:
             self.escribirArchivoLog("Error al graficar 3D: "+str(e))
       
@@ -3977,6 +4112,95 @@ class TTC_PORTAL():
                     centro_carro = kwargs[key][0][0] +( (kwargs[key][0][-1] - kwargs[key][0][0]) / 4 )
                     axs.text(centro_carro,kwargs[key][2][4],480, kwargs[key][4],'x', fontsize=15,color = 'black')
                 """if 'MR_TOTALCAMION' in kwargs[key][2]:
+                    MR_TOTAL = kwargs[key][2]
+                    MR_TOTALCAMION = MR_TOTALCAMION.split('=')[1]
+                    left, right = plt.xlim()
+                    mid = left + ( (right - left) / 3 )
+                    axs.text(mid,500,550, kwargs[key][2],'x', fontsize=18,color = 'black')
+                """
+
+            #Agregar la leyenda
+            #axs.legend()
+            #Configuración para la rotación de la primera visualización
+            axs.view_init(13, -91)
+            #Configuración del eje Y para visualizar mejor la nube de puntos
+            axs.set(ylim=(-800, 1500))
+            axs.set_zlim3d(200,600)
+            #Quitar los ejes
+            plt.axis('off')
+            
+            
+            # MR_TOTAL = round(float(MR_CAMION) + float(MR_CARRO),2)
+            # print(self.MR_TOTAL_E)
+            MR_TOTAL = round((self.MR_CAMION_E + self.MR_CARRO_E),2)
+            # print(MR_TOTAL)
+
+            left, right = plt.xlim()
+            mid = left + ( (right - left) / 3 )
+            axs.text(mid,500,550, 'TOTAL_MR= '+str(MR_TOTAL),'x', fontsize=18,color = 'black')
+
+            #Imprimir Gráfica
+            #figure = plt.gcf()
+            #figure.set_size_inches(5, 1)
+            #plt.tight_layout()
+            plt.savefig(ruta_camion+"/Img/Graficas/Grafica3D.jpg")
+            # print("Graficas camión ID:",)
+            plt.savefig("E:/TTC/GRAFICAS/Grafica3D-"+str(self.PES_ID)+".jpg")
+            # plt.show()
+            plt.close()
+        except Exception as e:
+            self.escribirArchivoLog("Error Graficar 3D N_Veces: "+str(e))
+  
+    def graficar3d_nveces_solocamion(self, carpeta : str, ruta_camion : str, kwargs):
+        try:
+            if not exists(ruta_camion+"/Img/Graficas"):
+                makedirs(ruta_camion+"/Img/Graficas")
+            else:
+                pass
+                #print('Ya existe la carpeta se va a borrar')
+                # shutil.rmtree(ruta_camion+"/Img/Graficas", ignore_errors=True)
+                # time.sleep(2)
+                # makedirs(ruta_camion+"/Img/Graficas")
+
+            #Iniciar Variables en 0
+            # MR_CAMION = 0
+            # MR_CARRO = 0
+            MR_TOTAL = 0
+            #Estructura matplotlib eje cartesiano 3D
+            #Quitar Menu Superior
+            rcParams['toolbar'] = 'None'
+            fig, axs = plt.subplots(figsize=(15,8),frameon=False)
+            #Quitar el margen de los bordes
+            plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
+            #fig_ = plt.get_current_fig_manager()
+            #fig_.window.showMaximized()
+            #fig_.window.setWindowIcon(QtGui.QIcon("img/Icono-APP.jpg"))
+            #fig_.canvas.set_window_title('TTC Gráfica 3D')
+            
+            axs = plt.axes(projection='3d')
+            for key in kwargs:
+                axs.scatter(np.array(kwargs[key][0]), 
+                                        np.array(kwargs[key][2]), 
+                                        marker='o',
+                                        s=kwargs[key][3]**2,
+                                        label="TTC-SCAN {} {}".format(carpeta,key))
+                """if 'AUTOCARGANTE' in key:
+                    axs.text(kwargs[key][0][0],kwargs[key][2][4],380, key,'x', fontsize=12,color = 'black')
+                if 'MR=' in kwargs[key][4]:
+                    axs.text(kwargs[key][0][0],kwargs[key][2][4],400, kwargs[key][4],'x', fontsize=9,color = 'black')
+                """
+                # if 'MR_CAMION' in kwargs[key][4]:
+                #     MR_CAMION = kwargs[key][4]
+                #     MR_CAMION = MR_CAMION.split('=')[1]
+                    # centro_camion = kwargs[key][0][0] +( (kwargs[key][0][-1] - kwargs[key][0][0]) / 4 )
+                    # axs.text(centro_camion,kwargs[key][2][4],480, kwargs[key][4],'x', fontsize=15,color = 'black')
+                """if 'MR_CARRO' in kwargs[key][4]:
+                    MR_CARRO = kwargs[key][4]
+                    MR_CARRO = MR_CARRO.split('=')[1]
+                    centro_carro = kwargs[key][0][0] +( (kwargs[key][0][-1] - kwargs[key][0][0]) / 4 )
+                    axs.text(centro_carro,kwargs[key][2][4],480, kwargs[key][4],'x', fontsize=15,color = 'black')
+                if 'MR_TOTALCAMION' in kwargs[key][2]:
                     MR_TOTAL = kwargs[key][2]
                     MR_TOTALCAMION = MR_TOTALCAMION.split('=')[1]
                     left, right = plt.xlim()
@@ -4347,8 +4571,8 @@ class TTC_PORTAL():
                         "DISTANCIA_CARRO_BOTTOM="+str(self.DISTANCIA_CARRO_BOTTOM)+"\n"+
                         "DISTANCIA_CAMION_RIGHT="+str(self.DISTANCIA_CAMION_RIGHT)+"\n"+
                         "DISTANCIA_CARRO_RIGHT="+str(self.DISTANCIA_CARRO_RIGHT)+"\n"+
-                        "ANCHO_CAMION_CALCULADO="+str(self.ANCHO_CAMION_CALCULADO)+"\n"+
-                        "ANCHO_CARRO_CALCULADO="+str(self.ANCHO_CARRO_CALCULADO)+"\n")
+                        "ANCHO_CAMION_CALCULADO="+str( round(self.ANCHO_CAMION_CALCULADO/ 100,2) )+"\n"+
+                        "ANCHO_CARRO_CALCULADO="+str( round(self.ANCHO_CARRO_CALCULADO/ 100,2) )+"\n")
             f.write(mensaje)
             f.close()
         except Exception as e:
@@ -4382,17 +4606,17 @@ class TTC_PORTAL():
                             "VELOCIDAD_PROMEDIO_TOTAL="+str(self.VELOCIDAD_PROMEDIO_TOTAL)+"KM/H\n"+
                             "ALTURA_CAMION=0\n"+
                             "LARGO_CAMION=0\n"+
-                            "ANCHO_CAMION=2.4\n"+
-                            "BASE_1_CAMION=1.42\n"+
-                            "BASE_2_CAMION=1.42\n"+
-                            "MR_CAMION=1\n"+
+                            "ANCHO_CAMION=0\n"+
+                            "BASE_1_CAMION=0\n"+
+                            "BASE_2_CAMION=0\n"+
+                            "MR_CAMION=0\n"+
                             "ALTURA_CARRO=0\n"+
                             "LARGO_CARRO=0\n"+
-                            "ANCHO_CARRO=2.4\n"+
-                            "BASE_1_CARRO=1.42\n"+
-                            "BASE_2_CARRO=1.42\n"+
-                            "MR_CARRO=1\n"+
-                            "MR_TOTAL=2\n"+
+                            "ANCHO_CARRO=0\n"+
+                            "BASE_1_CARRO=0\n"+
+                            "BASE_2_CARRO=0\n"+
+                            "MR_CARRO=0\n"+
+                            "MR_TOTAL=0\n"+
                             "<--COMPARAR BASE-->\n"+ 
                             "BASE_1_CAMION=0\n"+
                             "BASE_1_CAMION_INV=0\n"+
@@ -4431,7 +4655,7 @@ class TTC_PORTAL():
 
             message = MIMEMultipart("alternative")
             message["Subject"] = "TTC_SCAN "+fecha
-            message["From"] = "TTC_SCAN ARAUCO LAS CRUCES <"+sender_email+">"
+            message["From"] = f"TTC_SCAN {self.nombre_cliente} {self.nombre_dispositivo} <"+sender_email+">"
             message["To"] = "ttc.albertopernalete@gmail.com"
             message["CC"] = "ttc.alejandracatejo@gmail.com, cvillegasttc@gmail.com"
             # message["Bcc"] = "cvillegasttc@gmail.com"
@@ -4536,6 +4760,8 @@ class TTC_PORTAL():
             hoyHora = datetime.today()
             formatoHoraFecha = "%d/%m/%Y-%H:%M:%S"
             fecha_hora = hoyHora.strftime(formatoHoraFecha)
+            operador_espacio = 0
+            scan_espacio = 0
             operador_espacio = self.check_disco('S:/')
             scan_espacio = self.check_disco('E:/')
             
@@ -4561,7 +4787,8 @@ class TTC_PORTAL():
             header = ['IDCAMION', 
                         'FECHA MEDICION', 
                         'HORA MEDICION', 
-                        'AUTOCARGANTE',
+                        'AUTOCARGANTE', 
+                        'APLICAR ANCHO',
                         'PATENTE', 
                         'LARGOCAMION', 
                         'LARGOCARRO', 
@@ -4615,12 +4842,19 @@ class TTC_PORTAL():
             ruta_base_csv = self.cargar_datos(ruta_configuraciones,"Path-master-csv")
             nombre_csv = "CSV-MASTER-TTCSCAN-{}.csv".format(fecha_mensual)
             ruta_master_csv = ruta_base_csv + nombre_csv
+            aplicar_ancho_camion = self.cargar_datos(ruta_configuraciones, "usar-ancho-calculado")
+            APLICAR_ANCHO = 'NO'
+            if aplicar_ancho_camion == True:
+                APLICAR_ANCHO = 'SI'
+            else:
+                APLICAR_ANCHO = 'NO'
 
 
             row = [self.PES_ID, 
                         fecha, 
                         hora, 
                         self.AUTOCARGANTE,
+                        APLICAR_ANCHO,
                         self.MP_PATENTE, 
                         self.LARGOCAMION, 
                         self.LARGOCARRO, 

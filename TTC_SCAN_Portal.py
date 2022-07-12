@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# -*- mode: python -*-
+import sys
+sys.setrecursionlimit(90000000)
 #LIbrerias especiales
 import json
 #Librerias generales
@@ -22,6 +25,23 @@ from TTC_SCAN_CAMARAS import TTC_PORTAL as TTC_P
 #------------------------------------
 ttc = TTC_P()
 
+ruta_directorio = ttc.obtener_ruta_actual()
+ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+
+# Configurar Cliente
+ttc.nombre_cliente = ttc.cargar_datos(ruta_configuraciones,"nombre-cliente")
+ttc.nombre_dispositivo = ttc.cargar_datos(ruta_configuraciones,"nombre-dispositivo")
+
+#Configurar salidas de semaforo y lidar en el modulo
+salida_modulo_verde = ttc.cargar_datos(ruta_configuraciones,"salida-modulo-verde")
+salida_modulo_rojo = ttc.cargar_datos(ruta_configuraciones,"salida-modulo-rojo")
+salida_modulo_lidar = ttc.cargar_datos(ruta_configuraciones,"salida-modulo-lidar")
+ttc.encender_verde = "S{}1".format(salida_modulo_verde)
+ttc.apagar_verde = "S{}0".format(salida_modulo_verde)
+ttc.encender_rojo = "S{}1".format(salida_modulo_rojo)
+ttc.apagar_rojo = "S{}0".format(salida_modulo_rojo)
+ttc.encender_lidar = "S{}1".format(salida_modulo_lidar)
+
 #Si el semaforo está encendido, se apaga.
 ttc.write_serial(ttc.apagar_rojo)
 ttc.write_serial(ttc.apagar_verde)
@@ -29,23 +49,33 @@ ttc.write_serial(ttc.apagar_verde)
 #Iniciar el Lidar siempre
 ttc.write_serial(ttc.encender_lidar)
 
-
+# Checkear que camaras estan funcionando
 ischeck = ttc.check_cameras_on()
 if ischeck == False:
-    ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS OFF")
+    ttc.enviar_mensaje_correo(f"Inicio del SISTEMA TTC_SCAN {ttc.nombre_cliente} CON CÁMARAS OFF")
     ttc.post_archivo_txt("RESET-OFF")
 elif ischeck == True:
-    ttc.enviar_mensaje_correo("Inicio del SISTEMA TTC_SCAN ARAUCO CON CÁMARAS ON")
+    ttc.enviar_mensaje_correo(f"Inicio del SISTEMA TTC_SCAN {ttc.nombre_cliente} CON CÁMARAS ON")
 
-ruta_directorio = ttc.obtener_ruta_actual()
-ruta_configuraciones = ruta_directorio+"/SETUP/configuraciones.json"
+
 if exists(ttc.cargar_datos(ruta_configuraciones,"Path-Modo")):
     ttc.escribirArchivoModo("f")
 
+
+#Identificar canal de camara entrada y patente
+canal_camara_entrada = ttc.cargar_datos(ruta_configuraciones,"canal-camara-entrada")
+canal_camara_patente = ttc.cargar_datos(ruta_configuraciones,"canal-camara-patente")
+
+#Variables para apagar verde durante 1 minuto mientras inicia el sistema
+tiempo_inicio_sistema = ttc.segundo_del_dia()
+tiempo_espera_apagar_verde = ttc.cargar_datos(ruta_configuraciones,"tiempo-espera-apagar-verde")
+
 ttc.post_archivo_txt("ESPERANDO")
 validador_nsemaforo = True
+nsemaforo = 'NEGRO'
 
 while True:
+    tiempo_actual_sistema = ttc.segundo_del_dia()
     sensor_cabina = ''
     if exists(ttc.cargar_datos(ruta_configuraciones,"Path-Modo")):
         try:
@@ -58,7 +88,7 @@ while True:
         except Exception as e:
             ttc.escribirArchivoLog("Error Leer Archivo nsemaforo: "+str(e))
 
-        control_semaforo = ttc.cargar_datos(ruta_configuraciones,"CONTROL-SEMAFORO")
+        control_semaforo = ttc.cargar_datos(ruta_configuraciones,"CONTROL-SEMAFORO-SENSORES")
 
         #print(nsemaforo)
         if nsemaforo == "NEGRO":
@@ -98,7 +128,6 @@ while True:
                     sensor_cabina = ''
                     ttc.escribirArchivoLog("Error Comunicación Serial Semáforo: "+str(e))
 
-
         elif nsemaforo == "ROJO":
             
             #print(nsemaforo)
@@ -108,6 +137,7 @@ while True:
 
         else:
             pass
+
 
         if modo == "a":
             # Apagar
@@ -133,7 +163,7 @@ while True:
                     ttc.escribirArchivoLog("ESPACIO EN DISCO DEL TTCSCAN SUFICIENTE")
                 else:
                     ttc.escribirArchivoLog("ESPACIO EN DISCO DEL TTCSCAN INSUFICIENTE")
-                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL TTCSCAN INSUFICIENTE")
+                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL TTCSCAN {ttc.nombre_cliente} INSUFICIENTE")
 
             if validar_disco_operador == True:
                 espacio_libre_operador = ttc.check_disco('S:/')
@@ -141,7 +171,7 @@ while True:
                     ttc.escribirArchivoLog("ESPACIO EN DISCO DEL OPERADOR SUFICIENTE")
                 else:
                     ttc.escribirArchivoLog("ESPACIO EN DISCO DEL OPERADOR INSUFICIENTE")
-                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL OPERADOR INSUFICIENTE")
+                    ttc.enviar_mensaje_correo("ESPACIO EN DISCO DEL OPERADOR {ttc.nombre_cliente} INSUFICIENTE")
 
             
             #===================================
@@ -152,9 +182,9 @@ while True:
             
             FOTOS_DVR = ttc.cargar_datos(ruta_configuraciones,"FOTOS-DVR")
             if FOTOS_DVR == True:
-                ttc.TomarFotoDVR('2', 'PatenteCamion')
+                ttc.TomarFotoDVR(canal_camara_patente, 'PatenteCamion')
                 # ttc.TomarFotoDVR('3', 'PatenteCarro')
-                ttc.TomarFotoDVR('1', 'FotoEntrada')
+                ttc.TomarFotoDVR(canal_camara_entrada, 'FotoEntrada')
                 # ttc.TomarFotoDVR('7', 'FotoSalida')
              
             try:              
@@ -182,9 +212,10 @@ while True:
                     datos['y'] = ttc.EjeY
                     datos['z'] = ttc.EjeZ
                     ttc.crear_json('Puntos-Top', datos)
-                    ttc.escribirArchivo(str(ttc.EjeX)+"\n","-Top")
-                    ttc.escribirArchivo(str(ttc.EjeY)+"\n","-Top")
-                    ttc.escribirArchivo(str(ttc.EjeZ)+"\n","-Top")
+                    # Comentado generar archivos txt con los puntos
+                    # ttc.escribirArchivo(str(ttc.EjeX)+"\n","-Top")
+                    # ttc.escribirArchivo(str(ttc.EjeY)+"\n","-Top")
+                    # ttc.escribirArchivo(str(ttc.EjeZ)+"\n","-Top")
                     ttc.contadorX = 1              
                 else:
                     pass
@@ -195,9 +226,10 @@ while True:
                     datos2['y'] = ttc.EjeY2
                     datos2['z'] = ttc.EjeZ2
                     ttc.crear_json( 'Puntos-Corner', datos2)
-                    ttc.escribirArchivo(str(ttc.EjeX2)+"\n","-Corner")
-                    ttc.escribirArchivo(str(ttc.EjeY2)+"\n","-Corner")
-                    ttc.escribirArchivo(str(ttc.EjeZ2)+"\n","-Corner")
+                    # Comentado generar archivos txt con los puntos
+                    # ttc.escribirArchivo(str(ttc.EjeX2)+"\n","-Corner")
+                    # ttc.escribirArchivo(str(ttc.EjeY2)+"\n","-Corner")
+                    # ttc.escribirArchivo(str(ttc.EjeZ2)+"\n","-Corner")
                     ttc.contadorX2 = 1           
                 else:
                     pass
@@ -208,9 +240,10 @@ while True:
                     datos3['y'] = ttc.EjeY3
                     datos3['z'] = ttc.EjeZ3
                     ttc.crear_json( 'Puntos-Bottom', datos3)
-                    ttc.escribirArchivo(str(ttc.EjeX3)+"\n","-Bottom")
-                    ttc.escribirArchivo(str(ttc.EjeY3)+"\n","-Bottom")
-                    ttc.escribirArchivo(str(ttc.EjeZ3)+"\n","-Bottom")
+                    # Comentado generar archivos txt con los puntos
+                    # ttc.escribirArchivo(str(ttc.EjeX3)+"\n","-Bottom")
+                    # ttc.escribirArchivo(str(ttc.EjeY3)+"\n","-Bottom")
+                    # ttc.escribirArchivo(str(ttc.EjeZ3)+"\n","-Bottom")
                     ttc.contadorX3 = 1            
                 else:
                     pass
@@ -221,9 +254,10 @@ while True:
                     datos4['y'] = ttc.EjeY4
                     datos4['z'] = ttc.EjeZ4
                     ttc.crear_json( 'Puntos-Right', datos4)
-                    ttc.escribirArchivo(str(ttc.EjeX4)+"\n","-Right")
-                    ttc.escribirArchivo(str(ttc.EjeY4)+"\n","-Right")
-                    ttc.escribirArchivo(str(ttc.EjeZ4)+"\n","-Right")
+                    # Comentado generar archivos txt con los puntos
+                    # ttc.escribirArchivo(str(ttc.EjeX4)+"\n","-Right")
+                    # ttc.escribirArchivo(str(ttc.EjeY4)+"\n","-Right")
+                    # ttc.escribirArchivo(str(ttc.EjeZ4)+"\n","-Right")
                     ttc.contadorX4 = 1            
                 else:
                     pass
@@ -232,6 +266,7 @@ while True:
 
 
                 #--Se genera archivo para Carlos con todos los datos para Sync
+                # Se comenta archivo txt para la sync
                 ttc.generated_file_full(ttc.tiempo_datos_por_linea, ttc.EjeZ, ttc.EjeZ2, ttc.EjeZ3)
                 #--Se copia la info de NPesaje que Daniela genera
                 ttc.post_lines_in_file(ttc.get_lines_in_file(ttc.cargar_datos(ruta_configuraciones,'Path-Pesaje')),'Datos-Camion',ttc.path) 
@@ -274,6 +309,9 @@ while True:
             # print("******  dict_npesaje=",dict_npesaje)
             ttc.BANCOSCAMION = dict_npesaje['BANCOSCAMION']
             ttc.BANCOSCARRO = dict_npesaje['BANCOSCARRO']
+            numero_bancos_camion = ttc.BANCOSCAMION.split('-')[1]
+            numero_bancos_carro = ttc.BANCOSCARRO.split('-')[1]
+            print("Bancos Camion:",numero_bancos_camion,"Bancos Carro:",numero_bancos_carro)
             ttc.GUIA = dict_npesaje['GUIA']
             # tipo_bancos_carro = dict_npesaje['BANCOSCARRO']
             # tipo_bancos_camion = dict_npesaje['BANCOSCAMION']
@@ -291,6 +329,7 @@ while True:
                 #Factor corrección aplica o no
                 #aplica_factor = ttc.cargar_datos(ruta_configuraciones,"Aplica_Factor")
                 ruta_camiones = ttc.cargar_datos(ruta_configuraciones,"Ruta-Camiones")
+                activar_ancho_calculado = ttc.cargar_datos(ruta_configuraciones,"activar-ancho-calculado")
                 ruta_camion = ruta_camiones+"/"+ dict_npesaje['IDPESAJE']
                 ttc.PES_ID = dict_npesaje['IDPESAJE']
                 ttc.IDMEDICION = dict_npesaje['IDMEDICION']
@@ -323,187 +362,299 @@ while True:
 
                 #4- Ejecutar obtener_camion_carro
                 lista_indice = ttc.obtener_camion_carro(lista_top_z)
-                # print(lista_indice)
+                ttc.escribirArchivoLog("Indices en obtener_camion_carro(): "+str(len(lista_indice)))
+                print("Indices en obtener_camion_carro(): ",lista_indice,
+                lista_indice[0],lista_indice[-1])
 
+                # **********************************
+                ####################################
+                # SEPARAR PARTES DESDE ESTE PUNTO
+                ####################################
+                # **********************************
+                # No paso camión
+                # if lista_indice == 0:
+                #     print("No pasó camión")
+                #     ttc.post_mediciones_default('Mediciones-'+str(ttc.PES_ID),ruta_camion)
+                #     try:
+                #         ttc.guardar_db_estereo_defecto()  
+                #     except Exception as f: 
+                #         ttc.escribirArchivoLog("Error no Existe camión en DB: "+str(f))
+                # else:
+                #     print("Si pasó camión")
+                if (int(numero_bancos_camion) >=1) and (int(numero_bancos_carro) >=1):                    
+                    ####################################
+                    # INICIO MEDICION AMBAS PARTES
+                    ####################################
+                    #5- Detectar inicio camion y fin carro
+                    inicio_camion = lista_indice[0]
+                    fin_carro = lista_indice[-1]
+                    # print(inicio_camion,fin_carro)
 
-                #5- Detectar inicio camion y fin carro
-                inicio_camion = lista_indice[0]
-                fin_carro = lista_indice[-1]
-                # print(inicio_camion,fin_carro)
+                    #6-Calcular Velocidad completa del camión
+                    velocidad_camion = ttc.obtener_velocidad_camion(inicio_camion,fin_carro,ruta_camion)
+                    # print("Velocidad:",str(velocidad_camion)+"km")
 
-                #6-Calcular Velocidad completa del camión
-                velocidad_camion = ttc.obtener_velocidad_camion(inicio_camion,fin_carro,ruta_camion)
-                # print("Velocidad:",str(velocidad_camion)+"km")
+                    lista_camion_carro_z = lista_top_z[inicio_camion:fin_carro]
+                    lista_camion_carro_x = lista_top_x[inicio_camion:fin_carro]
+                        
+                    #6- Filtrar la cabina de todos los camiones
+                    camion_z_final,  camion_x_final = ttc.filtrar_cabina(lista_original_Top_z, 
+                                                                        inicio_camion, 
+                                                                        fin_carro, 
+                                                                        lista_top_z[inicio_camion:fin_carro], 
+                                                                        lista_top_x[inicio_camion:fin_carro], 
+                                                                        lista_top_z, 
+                                                                        lista_top_x)
+                    # print(camion_z_final,  camion_x_final)
 
-                lista_camion_carro_z = lista_top_z[inicio_camion:fin_carro]
-                lista_camion_carro_x = lista_top_x[inicio_camion:fin_carro]
-                    
-                #6- Filtrar la cabina de todos los camiones
-                camion_z_final,  camion_x_final = ttc.filtrar_cabina(lista_original_Top_z, 
-                                                                    inicio_camion, 
-                                                                    fin_carro, 
-                                                                    lista_top_z[inicio_camion:fin_carro], 
-                                                                    lista_top_x[inicio_camion:fin_carro], 
-                                                                    lista_top_z, 
-                                                                    lista_top_x)
-                # print(camion_z_final,  camion_x_final)
+                    #7- Detectar Fin Camión e Inicio de Carro
+                    fin_camion, inicio_carro = ttc.separar_camion_carro(lista_original_Top_z,
+                                                                        camion_z_final,
+                                                                        camion_x_final,
+                                                                        ruta_camion,
+                                                                        camion_x_final[0],
+                                                                        fin_carro,
+                                                                        inicio_camion)
+                                            
+                    #**** MEDICION ESTEREO CAMION ****
+                    if auto_cargante == 'NO':
+                        try:
+                            lista_graficar_camion = ttc.medicion_full_estereo('CAMION',
+                                                            camion_x_final[0],
+                                                            fin_camion,
+                                                            lista_original_Top_z,
+                                                            lista_top_z,
+                                                            lista_top_x,
+                                                            dict_npesaje,
+                                                            velocidad_camion,
+                                                            ruta_camion)
+                            if ttc.MR_CAMION_E > 0 or ttc.MR_CAMION_LC > 0:
+                                estado_estereo_camion = True
+                            else:
+                                estado_estereo_camion = False
+                        except Exception as e:
+                            estado_estereo_camion = False
+                    else:
+                        try: 
+                            #print("SI Autocargante")
+                            lista_graficar_autocargante = ttc.medicion_full_estereo_autocargante('CAMION',
+                                                                                        camion_x_final[0],
+                                                                                        fin_camion,
+                                                                                        lista_original_Top_z,
+                                                                                        lista_top_z,
+                                                                                        lista_top_x,
+                                                                                        dict_npesaje,
+                                                                                        velocidad_camion,
+                                                                                        ruta_camion)
+                            if ttc.MR_CAMION_E > 0 or ttc.MR_CAMION_LC > 0:
+                                estado_estereo_camion = True
+                            else:
+                                estado_estereo_camion = False
 
-                #7- Detectar Fin Camión e Inicio de Carro
-                fin_camion, inicio_carro = ttc.separar_camion_carro(lista_original_Top_z,
-                                                                    camion_z_final,
-                                                                    camion_x_final,
-                                                                    ruta_camion,
-                                                                    camion_x_final[0],
-                                                                    fin_carro,
-                                                                    inicio_camion)
-                                
-                    
-                # print("Inicio Camion",inicio_camion)
-                # print("Inicio B1", camion_x_final[0])
-                # print("Fin Camion",fin_camion)
-                # print("Inicio Carro",inicio_carro)
-                # print("Fin Carro",fin_carro)
-          
-
-
-
-
-
-            #**** MEDICION ESTEREO CAMION ****
-                if auto_cargante == 'NO':
+                        except Exception as e:
+                            estado_estereo_camion = False
+                    #**** FIN MEDICION ESTEREO CAMION ****
+                
+                    #**** MEDICION ESTEREO CARRO ****
                     try:
-                        lista_graficar_camion = ttc.medicion_full_estereo('CAMION',
-                                                        camion_x_final[0],
-                                                        fin_camion,
+                        lista_graficar_carro = ttc.medicion_full_estereo('CARRO',
+                                                        inicio_carro,
+                                                        fin_carro,
                                                         lista_original_Top_z,
                                                         lista_top_z,
                                                         lista_top_x,
                                                         dict_npesaje,
                                                         velocidad_camion,
                                                         ruta_camion)
-                        if ttc.MR_CAMION_E > 0 or ttc.MR_CAMION_LC > 0:
-                            estado_estereo_camion = True
+                        if ttc.MR_CARRO_E > 0 or ttc.MR_CARRO_LC > 0:
+                            estado_estereo_carro = True
                         else:
-                            estado_estereo_camion = False
+                            estado_estereo_carro = False
                     except Exception as e:
-                        estado_estereo_camion = False
-                else:
-                    try: 
-                        #print("SI Autocargante")
-                        lista_graficar_autocargante = ttc.medicion_full_estereo_autocargante('CAMION',
-                                                                                    camion_x_final[0],
-                                                                                    fin_camion,
-                                                                                    lista_original_Top_z,
-                                                                                    lista_top_z,
-                                                                                    lista_top_x,
-                                                                                    dict_npesaje,
-                                                                                    velocidad_camion,
-                                                                                    ruta_camion)
-                        if ttc.MR_CAMION_E > 0 or ttc.MR_CAMION_LC > 0:
-                            estado_estereo_camion = True
-                        else:
-                            estado_estereo_camion = False
-
-                    except Exception as e:
-                        estado_estereo_camion = False
-            #**** FIN MEDICION ESTEREO CAMION ****
-            
-            #**** MEDICION ESTEREO CARRO ****
-                try:
-                    lista_graficar_carro = ttc.medicion_full_estereo('CARRO',
-                                                    inicio_carro,
-                                                    fin_carro,
-                                                    lista_original_Top_z,
-                                                    lista_top_z,
-                                                    lista_top_x,
-                                                    dict_npesaje,
-                                                    velocidad_camion,
-                                                    ruta_camion)
-                    if ttc.MR_CARRO_E > 0 or ttc.MR_CARRO_LC > 0:
-                        estado_estereo_carro = True
-                    else:
                         estado_estereo_carro = False
-                except Exception as e:
-                    estado_estereo_carro = False
-            #**** MEDICION ESTEREO CARRO ****
+                    #**** MEDICION ESTEREO CARRO ****
+
+                    #**** GRAFICAR LATERALES ****
+                    if activar_ancho_calculado == True:
+                        try:
+                            ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_bottom, 
+                                                            ttc.lista_graficar_carro_bottom, 
+                                                            'bottom')
+                            ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_right, 
+                                                            ttc.lista_graficar_carro_right, 
+                                                            'right')
+                        except Exception as e:
+                            ttc.escribirArchivoLog("Error Guardar gráficas laterales: "+str(e))
+                    #**** FIN GRAFICAR LATERALES ****
+        
+                    #**** GUARDAR GRÁFICAs ****
+                    try:
+                        if auto_cargante == 'SI' and estado_estereo_camion == True:
+                            ttc.post_graficar_3D(lista_graficar_autocargante, lista_graficar_carro)
+                            #ttc.post_graficar_2D()
+                        elif auto_cargante == 'NO' and estado_estereo_camion == True:
+                            #ttc.post_graficar_3D()
+                            ttc.post_graficar_3D(lista_graficar_camion, lista_graficar_carro)
+                            #ttc.post_graficar_2D()
+                    except Exception as e:
+                        ttc.escribirArchivoLog("Error Guardar gráficas: "+str(e))
+                    #**** FIN GUARDAR GRÁFICAs **** 
+
+                    ttc.post_mediciones_txt('Mediciones-'+str(ttc.PES_ID),ruta_camion)
+    
+                    #ACTIVADO Inicio Guardar BD PLAN B
+                    #Se intenta guardar en la BD
+                    try:
+                        #Si se calculó bien el PLAN B para el camipon y carro
+                        if estado_estereo_camion == True and estado_estereo_carro == True:
+
+                            print("Listo para guardar en DB...")
+                            guardar_datos_db = ttc.cargar_datos(ruta_configuraciones, "guardar-datos-db")
+                            print("guardar_datos_db",guardar_datos_db)
+                            #Se consulta la configuración si se guarda en BD o no
+                            if guardar_datos_db == True:
+                                ttc.guardar_db_estereo()        
+                                print("Guardado correctamente en DB Estereo ======> OK") 
+                            else:
+                                print("Desactivado guardar en DB Estereo") 
+                        else:
+                            #En caso de que salga mal alguna medición se guarda en BD el PLAN C
+                            ttc.guardar_db_estereo_lc()
+                            print("Error al intentar guardar en DB Estereo LC")
+                    except Exception as e:
+                        try:
+                            #En caso de que de error guardar en BD se guarda los datos por defecto
+                            #Total MR camion 2MR
+                            ttc.guardar_db_estereo_defecto()  
+                        except Exception as e: 
+                            ttc.escribirArchivoLog("Error no Existe camión en BD: "+str(e))
+                        ttc.escribirArchivoLog("Error Guardar BD: "+str(e))
+                    #Fin Guardar BD PLAN B
+                    ####################################
+                    # FIN MEDICION AMBAS PARTES
+                    ####################################
+                elif (int(numero_bancos_camion) >=1) and (int(numero_bancos_carro) == 0):          
+                    ####################################
+                    # INICIO MEDICION SOLO CAMION
+                    ####################################   
+                    print("Solo camion con ",numero_bancos_camion," bancos")      
+                    #5- Detectar inicio camion y fin carro
+                    inicio_camion = lista_indice[0]
+                    fin_camion = lista_indice[-1]
+                    print("1 - Partes solo camion:",inicio_camion,fin_camion)
+
+                    #6-Calcular Velocidad completa del camión
+                    velocidad_camion = ttc.obtener_velocidad_camion(inicio_camion,fin_camion,ruta_camion)
+                    print("Velocidad:",str(velocidad_camion)+"km")
+
+                    #7-Filtrar cabina
+                    num_muestras_camion = len(lista_top_x[inicio_camion:fin_camion])
+                    zona_fin_cabina = ( round(num_muestras_camion * 0.10) ) + inicio_camion
+                    camion_x_final = lista_top_x[zona_fin_cabina:fin_camion]
+                    print("2 - Partes solo camion:",inicio_camion,camion_x_final[0],fin_camion)
 
 
-            #**** GRAFICAR LATERALES ****
-                try:
-                    ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_bottom, 
-                                                    ttc.lista_graficar_carro_bottom, 
-                                                    'bottom')
-                    ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_right, 
-                                                    ttc.lista_graficar_carro_right, 
-                                                    'right')
-                except Exception as e:
-                    ttc.escribirArchivoLog("Error Guardar gráficas laterales: "+str(e))
-            #**** FIN GRAFICAR LATERALES ****
+                                                               
+                    #**** MEDICION ESTEREO CAMION ****
+                    try:
+                        lista_graficar_camion = ttc.medicion_full_estereo('CAMION',
+                                                            camion_x_final[0],
+                                                            fin_camion,
+                                                            lista_original_Top_z,
+                                                            lista_top_z,
+                                                            lista_top_x,
+                                                            dict_npesaje,
+                                                            velocidad_camion,
+                                                            ruta_camion)
+                        if ttc.MR_CAMION_E > 0 or ttc.MR_CAMION_LC > 0:
+                            estado_estereo_camion = True
+                        else:
+                            estado_estereo_camion = False
+                    except Exception as e:
+                        estado_estereo_camion = False
+                    #**** FIN MEDICION ESTEREO CAMION **** 
+                    # print("Lista graficar:",lista_graficar_camion)   
+                    # print("lista_graficar_camion_bottom:",ttc.lista_graficar_camion_bottom)   
+                    # print("lista_graficar_camion_right:",ttc.lista_graficar_camion_right)               
+
+                    #**** GRAFICAR LATERALES ****
+                    # if activar_ancho_calculado == True:
+                    #     try:
+                    #         ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_bottom, 
+                    #                                         [], 
+                    #                                         'bottom')
+                    #         ttc.post_graficar_3D_lateral(ttc.lista_graficar_camion_right, 
+                    #                                         [], 
+                    #                                         'right')
+                    #     except Exception as e:
+                    #         ttc.escribirArchivoLog("Error Guardar gráficas laterales: "+str(e))
+                    #**** FIN GRAFICAR LATERALES ****
+        
+                    #**** GUARDAR GRÁFICAs ****
+                    try:
+                        if auto_cargante == 'SI' and estado_estereo_camion == True:
+                            ttc.post_graficar_3D_soloCamion(lista_graficar_autocargante)
+                        elif auto_cargante == 'NO' and estado_estereo_camion == True:
+                            ttc.post_graficar_3D_soloCamion(lista_graficar_camion)
+                    except Exception as e:
+                        ttc.escribirArchivoLog("Error Guardar gráficas: "+str(e))
+                    #**** FIN GUARDAR GRÁFICAs **** 
+
+                    ttc.post_mediciones_txt('Mediciones-'+str(ttc.PES_ID),ruta_camion)
+    
+                    #ACTIVADO Inicio Guardar BD PLAN B
+                    #Se intenta guardar en la BD
+                    try:
+                        #Si se calculó bien el PLAN B para el camipon y carro
+                        if estado_estereo_camion == True:
+
+                            print("Listo para guardar en DB...")
+                            guardar_datos_db = ttc.cargar_datos(ruta_configuraciones, "guardar-datos-db")
+                            print("guardar_datos_db",guardar_datos_db)
+                            #Se consulta la configuración si se guarda en BD o no
+                            if guardar_datos_db == True:
+                                ttc.guardar_db_estereo()        
+                                print("Guardado correctamente en DB Estereo ======> OK") 
+                            else:
+                                print("Desactivado guardar en DB Estereo") 
+                        else:
+                            #En caso de que salga mal alguna medición se guarda en BD el PLAN C
+                            ttc.guardar_db_estereo_lc()
+                            print("Error al intentar guardar en DB Estereo LC")
+                    except Exception as e:
+                        try:
+                            #En caso de que de error guardar en BD se guarda los datos por defecto
+                            #Total MR camion 2MR
+                            ttc.guardar_db_estereo_defecto()  
+                        except Exception as e: 
+                            ttc.escribirArchivoLog("Error no Existe camión en BD: "+str(e))
+                        ttc.escribirArchivoLog("Error Guardar BD: "+str(e))
+                    #Fin Guardar BD PLAN B
+                    
+                    ####################################
+                    # FIN MEDICION SOLO CAMION
+                    ####################################
+                elif (int(numero_bancos_camion) == 0) and (int(numero_bancos_carro) >=1):                   
+                    ####################################
+                    # INICIO MEDICION SOLO CARRO
+                    ####################################
+                    
+                    ####################################
+                    # FIN MEDICION SOLO CARRO
+                    ####################################
+                    pass
+                elif (int(numero_bancos_camion) == 0) and (int(numero_bancos_carro) == 0):                   
+                    ####################################
+                    # INICIO MEDICION NO HAY CAMION
+                    ####################################
+                    
+                    ####################################
+                    # FIN MEDICION NO HAY CAMION
+                    ####################################
+                    pass
+                
 
                 
-            #**** GUARDAR GRÁFICAs ****
-                try:
-                    if auto_cargante == 'SI' and estado_estereo_camion == True:
-                        ttc.post_graficar_3D(lista_graficar_autocargante, lista_graficar_carro)
-                        #ttc.post_graficar_2D()
-                    elif auto_cargante == 'NO' and estado_estereo_camion == True:
-                        #ttc.post_graficar_3D()
-                        ttc.post_graficar_3D(lista_graficar_camion, lista_graficar_carro)
-                        #ttc.post_graficar_2D()
-                except Exception as e:
-                    ttc.escribirArchivoLog("Error Guardar gráficas: "+str(e))
-            #**** FIN GUARDAR GRÁFICAs **** 
-
-                ttc.post_mediciones_txt('Mediciones-'+str(ttc.PES_ID),ruta_camion)
-
-            
-            #ACTIVADO Inicio Guardar BD PLAN B
-                #Se intenta guardar en la BD
-                try:
-                    #Si se calculó bien el PLAN B para el camipon y carro
-                    if estado_estereo_camion == True and estado_estereo_carro == True:
-
-                        print("Listo para guardar en DB...")
-                        guardar_datos_db = ttc.cargar_datos(ruta_configuraciones, "guardar-datos-db")
-                        print("guardar_datos_db",guardar_datos_db)
-                        #Se consulta la configuración si se guarda en BD o no
-                        if guardar_datos_db == True:
-                            ttc.guardar_db_estereo()        
-                            print("Guardado correctamente en DB Estereo ======> OK") 
-                        else:
-                            print("Desactivado guardar en DB Estereo") 
-                    else:
-                        #En caso de que salga mal alguna medición se guarda en BD el PLAN C
-                        ttc.guardar_db_estereo_lc()
-                        print("Error al intentar guardar en DB Estereo LC")
-                except Exception as e:
-                    try:
-                        #En caso de que de error guardar en BD se guarda los datos por defecto
-                        #Total MR camion 2MR
-                        ttc.guardar_db_estereo_defecto()  
-                    except Exception as e: 
-                        ttc.escribirArchivoLog("Error no Existe camión en BD: "+str(e))
-                    ttc.escribirArchivoLog("Error Guardar BD: "+str(e))
-            #Fin Guardar BD PLAN B
-
-            #DESACTIVADO Inicio Guardar BD PLAN C
-                """print("Listo para guardar en DB...")
-                guardar_datos_db = ttc.cargar_datos(ruta_configuraciones, "guardar-datos-db")
-                print("guardar-datos-db",guardar_datos_db)
-                try:
-                    if guardar_datos_db == True:
-                        ttc.guardar_db_estereo_lc()        
-                        print("Guardado correctamente en DB Estereo ======> OK") 
-                    else:
-                        print("No se guarda en la BD") 
-                except Exception as e:
-                    try:
-                        ttc.guardar_db_estereo_defecto()  
-                    except Exception as e: 
-                        ttc.escribirArchivoLog("Error no Existe camión en DB: "+str(e))
-                    ttc.escribirArchivoLog("Error Guardar DB: "+str(e))"""
-            #Fin Guardar BD PLAN C
-                   
                 
                 #===================================
                 #=============FIN MEDIR==============
@@ -596,6 +747,10 @@ while True:
 
         else:
             pass
+        
+        
+        if tiempo_actual_sistema <= (tiempo_inicio_sistema+tiempo_espera_apagar_verde):            
+            ttc.write_serial(ttc.apagar_verde)
     
     else:
         #print("Sin MODO")

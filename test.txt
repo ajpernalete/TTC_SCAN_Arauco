@@ -1,0 +1,3 @@
+Error Leer Archivo NPesaje
+
+get_lidar_sync_data
